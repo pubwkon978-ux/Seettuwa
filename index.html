@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seettuwa — Join</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07080f;--s1:#0f1120;--s2:#171830;--s3:#1e2040;
+  --border:#2a2d50;--border2:#3a3f70;
+  --accent:#6c63ff;--accent2:#00e5cc;--accent3:#ff6b9d;
+  --warn:#ffbe0b;--danger:#ff4757;--success:#2ed573;
+  --text:#e8eaf6;--muted:#7b80a8;--faint:#3a3f60;
+}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* LOGIN */
+#s-login{align-items:center;justify-content:center;padding:1.5rem;}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:400px;text-align:center;}
+.login-card .brand{font-size:3rem;margin-bottom:.5rem;}
+.login-card h1{font-size:1.6rem;font-weight:800;margin-bottom:.3rem;}
+.login-card p{color:var(--muted);font-size:.85rem;margin-bottom:2rem;line-height:1.6;}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;}
+.google-btn:hover{border-color:var(--accent);background:var(--s3);}
+.google-btn svg{width:22px;height:22px;flex-shrink:0;}
+
+/* SET USERNAME */
+#s-username{align-items:center;justify-content:center;padding:1.5rem;}
+.uname-card{background:var(--s1);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:400px;text-align:center;}
+.uname-card .user-preview{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;margin-bottom:1.5rem;}
+.uname-card .user-preview img{width:38px;height:38px;border-radius:50%;}
+.uname-card .user-preview .uinit{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;}
+.uname-card .user-preview .uinfo{flex:1;text-align:left;}
+.uname-card .user-preview .uinfo .un{font-size:.88rem;font-weight:700;}
+.uname-card .user-preview .uinfo .ue{font-size:.7rem;color:var(--muted);}
+.uname-card h2{font-size:1.2rem;font-weight:800;margin-bottom:.4rem;}
+.uname-card p{color:var(--muted);font-size:.82rem;margin-bottom:1.2rem;}
+.text-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;text-align:center;outline:none;transition:border-color .2s;margin-bottom:10px;}
+.text-input:focus{border-color:var(--accent);}
+.text-input::placeholder{color:var(--muted);font-weight:400;}
+.primary-btn{width:100%;background:var(--accent);border:none;border-radius:12px;padding:13px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;}
+.primary-btn:hover{opacity:.85;}
+.primary-btn:active{transform:scale(.98);}
+.primary-btn:disabled{opacity:.4;cursor:not-allowed;}
+.err-msg{color:var(--danger);font-size:.78rem;margin-top:8px;min-height:18px;}
+
+/* WAITING */
+#s-waiting{flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center;gap:1rem;}
+#s-waiting .w-icon{font-size:3.5rem;}
+#s-waiting h2{font-size:1.3rem;font-weight:800;}
+#s-waiting p{color:var(--muted);font-size:.88rem;line-height:1.6;max-width:340px;}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.pending-chip{background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.3);color:var(--warn);border-radius:20px;padding:6px 16px;font-size:.78rem;font-weight:700;}
+.rejected-chip{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);color:var(--danger);border-radius:20px;padding:6px 16px;font-size:.78rem;font-weight:700;}
+
+/* MAIN GAME */
+#s-game{flex-direction:column;}
+.game-header{background:var(--s1);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.game-header .logo{font-size:1rem;font-weight:800;color:var(--accent);}
+.user-pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.78rem;}
+.user-pill img,.user-pill .uinit-sm{width:24px;height:24px;border-radius:50%;}
+.uinit-sm{background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;}
+.btn-out{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.btn-out:hover{color:var(--danger);border-color:var(--danger);}
+
+/* MEMBERS LIST STRIP */
+.members-strip{background:var(--s2);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;}
+.members-strip::-webkit-scrollbar{display:none;}
+.strip-label{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);flex-shrink:0;}
+.strip-member{display:flex;align-items:center;gap:5px;background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:.72rem;white-space:nowrap;flex-shrink:0;}
+.strip-member .dot{width:5px;height:5px;border-radius:50%;}
+.strip-member .dot.on{background:var(--success);box-shadow:0 0 4px var(--success);}
+.strip-member .dot.off{background:var(--faint);}
+.strip-member.has-num{border-color:rgba(0,229,204,.3);}
+.strip-member .snum{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent2);}
+
+.game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
+
+/* SHUFFLE COUNTDOWN */
+.shuffle-reveal{text-align:center;max-width:500px;width:100%;}
+.shuffle-reveal h2{font-size:1.3rem;font-weight:800;margin-bottom:.5rem;}
+.shuffle-reveal p{color:var(--muted);font-size:.85rem;margin-bottom:2rem;}
+.countdown-ring{width:120px;height:120px;margin:0 auto 1.5rem;position:relative;}
+.countdown-ring svg{transform:rotate(-90deg);}
+.countdown-ring .cr-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);}
+
+/* CARD GRID (pick) */
+.pick-panel{width:100%;max-width:680px;text-align:center;}
+.pick-panel h2{font-size:1.1rem;font-weight:800;margin-bottom:.3rem;}
+.pick-panel .sub{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;}
+.cards-pick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+@media(max-width:500px){.cards-pick-grid{grid-template-columns:repeat(4,1fr);}}
+.pick-card{aspect-ratio:2/3;background:var(--s1);border:2px solid var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .2s;position:relative;user-select:none;}
+.pick-card:not(.taken):hover{border-color:var(--accent);background:var(--s3);transform:translateY(-4px) scale(1.04);}
+.pick-card.taken{opacity:.3;cursor:not-allowed;}
+.pick-card .pc-icon{font-size:1.4rem;}
+.pick-card .pc-label{font-size:.55rem;font-family:'DM Mono',monospace;color:var(--muted);}
+
+/* MY CARD (flip) */
+.my-card-panel{text-align:center;max-width:300px;width:100%;}
+.my-card-panel .mcp-title{font-size:.82rem;color:var(--muted);margin-bottom:.5rem;font-weight:600;}
+.flip-hint{color:var(--muted);font-size:.75rem;margin-bottom:1rem;animation:blink 1.8s infinite;}
+@keyframes blink{0%,100%{opacity:.6}50%{opacity:1}}
+.flip-hint.gone{visibility:hidden;}
+.card-scene{width:180px;height:270px;perspective:800px;margin:0 auto 1.5rem;cursor:pointer;}
+.card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,0,.2,1);}
+.card-3d.is-flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--border);}
+.card-back-face{background:linear-gradient(135deg,#1a1a35,#252550);border-color:var(--accent);}
+.card-back-face .cb-ring{width:80px;height:80px;border-radius:50%;border:2px solid rgba(108,99,255,.3);display:flex;align-items:center;justify-content:center;}
+.card-back-face .cb-inner{width:52px;height:52px;border-radius:50%;border:2px solid rgba(108,99,255,.5);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.card-back-face .cb-hint{font-size:.68rem;color:var(--muted);margin-top:.8rem;}
+.card-back-face .cb-hint span{color:var(--accent);}
+.card-front-face{background:linear-gradient(135deg,#0d2030,#0d2540);border-color:var(--accent2);transform:rotateY(180deg);}
+.card-front-face .cf-num{font-family:'DM Mono',monospace;font-size:4.5rem;font-weight:500;color:var(--accent2);line-height:1;text-shadow:0 0 30px rgba(0,229,204,.4);}
+.card-front-face .cf-label{font-size:.68rem;color:var(--muted);margin-top:.4rem;}
+.card-front-face .cf-name{font-size:.85rem;font-weight:700;color:var(--text);margin-top:.2rem;}
+.revealed-badge{background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.25);border-radius:12px;padding:.7rem 1.2rem;color:var(--accent2);font-size:.82rem;font-weight:700;}
+
+/* LIVE RESULTS TABLE */
+.live-results-section{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:.8rem 1.5rem;max-height:38vh;overflow-y:auto;}
+.lr-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
+.lr-header h3{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
+.lr-toggle{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;}
+.lr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;}
+.lr-item{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.5rem .7rem;display:flex;align-items:center;gap:8px;}
+.lr-item .lnum{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent2);width:24px;text-align:center;flex-shrink:0;}
+.lr-item .lname{flex:1;font-size:.75rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lr-item .lstatus{width:7px;height:7px;border-radius:50%;background:var(--faint);flex-shrink:0;}
+.lr-item .lstatus.flipped{background:var(--accent3);box-shadow:0 0 4px var(--accent3);}
+.lr-item .lstatus.picked{background:var(--accent);}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:.8rem 1.2rem;font-size:.82rem;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,213,115,.4);color:var(--success);}
+.toast.error{border-color:rgba(255,71,87,.4);color:var(--danger);}
+</style>
+</head>
+<body>
+
+<!-- S1: LOGIN -->
+<div class="screen active" id="s-login">
+  <div class="login-card">
+    <div class="brand">🎴</div>
+    <h1>Seettuwa</h1>
+    <p>Game ekata join wenna<br>ඔයාගේ Google account use කරන්න.</p>
+    <button class="google-btn" onclick="signInGoogle()">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l5.9-5.9C34.5 3.3 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l6.9 5.4C12.3 13.8 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-16.9z"/><path fill="#FBBC05" d="M10.6 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-6.9-5.4A23.9 23.9 0 0 0 .5 24c0 3.9.9 7.5 2.6 10.7l7.5-6.1z"/><path fill="#34A853" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.9 2-6.3 0-11.6-4.2-13.5-9.9l-7.5 6.1C7 41.3 14.9 47 24 47z"/></svg>
+      Google eken Login වන්න
+    </button>
+    <div class="err-msg" id="login-err"></div>
+  </div>
+</div>
+
+<!-- S2: SET USERNAME -->
+<div class="screen" id="s-username">
+  <div class="uname-card">
+    <div class="user-preview" id="uname-preview"></div>
+    <h2>ඔයාගේ නම set කරන්න</h2>
+    <p>Game ඇතුළේ පෙනෙන name එක type කරලා<br>"Send Request" click කරන්න</p>
+    <input type="text" class="text-input" id="username-inp" placeholder="ඔයාගේ නම..." maxlength="20" autocomplete="off">
+    <button class="primary-btn" onclick="sendJoinRequest()">📨 Send Request to Admin</button>
+    <div class="err-msg" id="uname-err"></div>
+  </div>
+</div>
+
+<!-- S3: WAITING (pending / rejected) -->
+<div class="screen" id="s-waiting">
+  <span class="w-icon" id="w-icon">⏳</span>
+  <h2 id="w-title">Waiting for Admin</h2>
+  <p id="w-desc">ඔයාගේ request admin approve කරනකම් ඉන්න...</p>
+  <div id="w-spinner" class="spinner"></div>
+  <div id="w-status-chip"></div>
+  <button class="btn-out" onclick="signOutUser()" style="margin-top:1rem;">Cancel & Logout</button>
+</div>
+
+<!-- S4: MAIN GAME -->
+<div class="screen" id="s-game">
+  <div class="game-header">
+    <div class="logo">🎴 Seettuwa</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="user-pill" id="game-user-pill"></div>
+      <button class="btn-out" onclick="signOutUser()">Leave</button>
+    </div>
+  </div>
+  <div class="members-strip" id="members-strip">
+    <span class="strip-label">Members</span>
+  </div>
+  <div class="game-body" id="game-body"></div>
+  <div class="live-results-section" id="live-results-section" style="display:none;">
+    <div class="lr-header">
+      <h3>Live Results</h3>
+      <button class="lr-toggle" onclick="toggleResults()">hide ▾</button>
+    </div>
+    <div class="lr-grid" id="lr-grid"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut as fbSignOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, onValue, update, serverTimestamp, runTransaction }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC15xoj_yTycj6JKQmNamP_RdHAkRTBKJU",
+  authDomain: "seettuwa-8e728.firebaseapp.com",
+  databaseURL: "https://seettuwa-8e728-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "seettuwa-8e728",
+  storageBucket: "seettuwa-8e728.firebasestorage.app",
+  messagingSenderId: "602443508284",
+  appId: "1:602443508284:web:43ef7f44080b866525b139"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let me = null;
+let myMemberData = null;
+let presenceInterval = null;
+let gameListener = null;
+let memberListener = null;
+let requestListener = null;
+let lrExpanded = true;
+let countdownTimer = null;
+
+// ── AUTH ──
+window.signInGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    document.getElementById('login-err').textContent = e.message;
+  }
+};
+
+window.signOutUser = async () => {
+  clearPresence();
+  clearListeners();
+  await fbSignOut(auth);
+};
+
+onAuthStateChanged(auth, async user => {
+  me = user;
+  if (!user) { showScreen('s-login'); return; }
+  // check request/member status
+  await routeUser();
+});
+
+async function routeUser() {
+  if (!me) return;
+  const [memberSnap, requestSnap] = await Promise.all([
+    get(ref(db, `members/${me.uid}`)),
+    get(ref(db, `requests/${me.uid}`))
+  ]);
+
+  if (memberSnap.exists()) {
+    // accepted — go to game
+    myMemberData = memberSnap.val();
+    enterGame();
+  } else if (requestSnap.exists()) {
+    const req = requestSnap.val();
+    if (req.status === 'accepted') {
+      // Just accepted but member doc not written yet, wait
+      waitingScreen('pending');
+      listenRequest();
+    } else if (req.status === 'rejected') {
+      waitingScreen('rejected');
+    } else {
+      waitingScreen('pending');
+      listenRequest();
+    }
+  } else {
+    // New user — set username
+    showUsernameScreen();
+  }
+}
+
+// ── USERNAME SCREEN ──
+function showUsernameScreen() {
+  showScreen('s-username');
+  const prev = document.getElementById('uname-preview');
+  const photo = me.photoURL;
+  const name = me.displayName || me.email;
+  prev.innerHTML = `
+    ${photo ? `<img src="${esc(photo)}" style="width:38px;height:38px;border-radius:50%;">` : `<div class="uinit" style="width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;">${name[0].toUpperCase()}</div>`}
+    <div class="uinfo" style="flex:1;text-align:left;">
+      <div class="un" style="font-size:.88rem;font-weight:700;">${esc(name)}</div>
+      <div class="ue" style="font-size:.7rem;color:var(--muted);">${esc(me.email)}</div>
+    </div>`;
+  document.getElementById('username-inp').value = me.displayName ? me.displayName.split(' ')[0] : '';
+}
+
+window.sendJoinRequest = async () => {
+  const uname = document.getElementById('username-inp').value.trim();
+  if (!uname) { document.getElementById('uname-err').textContent = 'Name danna!'; return; }
+  if (uname.length < 2) { document.getElementById('uname-err').textContent = 'Name tika diga kරන්න'; return; }
+
+  // check if username taken
+  const membersSnap = await get(ref(db, 'members'));
+  const members = membersSnap.val() || {};
+  const taken = Object.values(members).some(m => m.username?.toLowerCase() === uname.toLowerCase());
+  if (taken) { document.getElementById('uname-err').textContent = 'Me name eka use wenawa! Wenas name ekak denna.'; return; }
+
+  await set(ref(db, `requests/${me.uid}`), {
+    uid: me.uid,
+    username: uname,
+    displayName: me.displayName || uname,
+    email: me.email,
+    photoURL: me.photoURL || '',
+    status: 'pending',
+    requestedAt: serverTimestamp()
+  });
+  waitingScreen('pending');
+  listenRequest();
+};
+
+// ── WAITING SCREEN ──
+function waitingScreen(status) {
+  showScreen('s-waiting');
+  const icon = document.getElementById('w-icon');
+  const title = document.getElementById('w-title');
+  const desc = document.getElementById('w-desc');
+  const chip = document.getElementById('w-status-chip');
+  const spinner = document.getElementById('w-spinner');
+
+  if (status === 'pending') {
+    icon.textContent = '⏳';
+    title.textContent = 'Request Sent!';
+    desc.textContent = 'Admin approve karanamath inna... oba ekata join wenna puluwan wenawa.';
+    chip.innerHTML = '<span class="pending-chip">⏳ Pending Approval</span>';
+    spinner.style.display = 'block';
+  } else if (status === 'rejected') {
+    icon.textContent = '😔';
+    title.textContent = 'Request Rejected';
+    desc.textContent = 'Admin oba reject karanawa. Wenas account ekakin try karanna puluwan.';
+    chip.innerHTML = '<span class="rejected-chip">✕ Rejected</span>';
+    spinner.style.display = 'none';
+  }
+}
+
+function listenRequest() {
+  if (requestListener) requestListener();
+  requestListener = onValue(ref(db, `requests/${me.uid}`), async snap => {
+    const data = snap.val();
+    if (!data) return;
+    if (data.status === 'accepted') {
+      // Check if member doc is written
+      const mSnap = await get(ref(db, `members/${me.uid}`));
+      if (mSnap.exists()) {
+        myMemberData = mSnap.val();
+        if (requestListener) { requestListener(); requestListener = null; }
+        enterGame();
+      }
+    } else if (data.status === 'rejected') {
+      waitingScreen('rejected');
+    }
+  });
+}
+
+// ── GAME ──
+function enterGame() {
+  showScreen('s-game');
+  setupPresence();
+  setupGameListeners();
+  updateGameUserPill();
+}
+
+function updateGameUserPill() {
+  const pill = document.getElementById('game-user-pill');
+  const uname = myMemberData?.username || me?.displayName || '?';
+  const photo = me?.photoURL;
+  const init = uname[0].toUpperCase();
+  pill.innerHTML = `
+    ${photo ? `<img src="${esc(photo)}" style="width:24px;height:24px;border-radius:50%;">` : `<div class="uinit-sm" style="background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;">${init}</div>`}
+    <span>${esc(uname)}</span>`;
+}
+
+function setupPresence() {
+  clearPresence();
+  const tick = () => set(ref(db, `online/${me.uid}`), Date.now());
+  tick();
+  presenceInterval = setInterval(tick, 6000);
+  window.addEventListener('beforeunload', clearPresence);
+}
+
+function clearPresence() {
+  if (presenceInterval) clearInterval(presenceInterval);
+  if (me) {
+    try { set(ref(db, `online/${me.uid}`), null); } catch {}
+  }
+}
+
+function clearListeners() {
+  if (gameListener) { gameListener(); gameListener = null; }
+  if (memberListener) { memberListener(); memberListener = null; }
+  if (requestListener) { requestListener(); requestListener = null; }
+}
+
+function setupGameListeners() {
+  clearListeners();
+
+  // Listen to both members+game+online simultaneously
+  let membersData = {}, gameData = {}, onlineData = {};
+
+  memberListener = onValue(ref(db, 'members'), snap => {
+    membersData = snap.val() || {};
+    renderGameView(membersData, gameData, onlineData);
+  });
+
+  gameListener = onValue(ref(db, 'game'), snap => {
+    gameData = snap.val() || {};
+    renderGameView(membersData, gameData, onlineData);
+  });
+
+  // Online
+  onValue(ref(db, 'online'), snap => {
+    onlineData = snap.val() || {};
+    renderGameView(membersData, gameData, onlineData);
+  });
+}
+
+function renderGameView(members, game, online) {
+  const now = Date.now();
+  const memberEntries = Object.entries(members);
+  const isShuffled = game.shuffled || false;
+  const assignments = game.assignments || {};
+  const flipped = game.flipped || {};
+  const shuffledOrder = game.shuffledOrder || [];
+  const onlineUids = Object.keys(online).filter(uid => (now - online[uid]) < 12000);
+
+  // ── Members strip ──
+  const strip = document.getElementById('members-strip');
+  strip.innerHTML = `<span class="strip-label">Members</span>` +
+    memberEntries.map(([uid, m]) => {
+      const isOnline = onlineUids.includes(uid);
+      const num = assignments[uid];
+      const isFlipped = flipped[uid];
+      return `<div class="strip-member ${num!==undefined?'has-num':''}">
+        <span class="dot ${isOnline?'on':'off'}"></span>
+        <span>${esc(m.username||m.displayName)}</span>
+        ${isFlipped ? `<span class="snum">✓${num}</span>` : num!==undefined ? `<span class="snum">#</span>` : ''}
+      </div>`;
+    }).join('');
+
+  // ── Live results ──
+  const lrSection = document.getElementById('live-results-section');
+  const lrGrid = document.getElementById('lr-grid');
+  if (memberEntries.length > 0 && isShuffled) {
+    lrSection.style.display = 'block';
+    lrGrid.innerHTML = memberEntries.map(([uid, m]) => {
+      const num = assignments[uid];
+      const isFlipped = flipped[uid];
+      return `<div class="lr-item">
+        <div class="lnum">${isFlipped ? num : (num!==undefined ? '?' : '—')}</div>
+        <div class="lname">${esc(m.username||m.displayName)}</div>
+        <div class="lstatus ${isFlipped?'flipped':num!==undefined?'picked':''}"></div>
+      </div>`;
+    }).join('');
+  } else {
+    lrSection.style.display = 'none';
+  }
+
+  // ── Main game body ──
+  const body = document.getElementById('game-body');
+  const myUid = me.uid;
+  const myNum = assignments[myUid];
+  const myFlipped = flipped[myUid];
+
+  // Check if I'm still a member
+  if (!members[myUid]) {
+    body.innerHTML = `<div style="text-align:center;"><div style="font-size:3rem;margin-bottom:1rem;">😔</div><h2>Removed</h2><p style="color:var(--muted);margin-top:.5rem;">Admin oba remove karanawa.</p></div>`;
+    return;
+  }
+
+  if (!isShuffled) {
+    // waiting for shuffle
+    body.innerHTML = `<div style="text-align:center;max-width:380px;">
+      <div style="font-size:3rem;margin-bottom:1rem;">⏳</div>
+      <h2 style="font-size:1.2rem;margin-bottom:.5rem;">Waiting for Admin</h2>
+      <p style="color:var(--muted);font-size:.85rem;">Admin cards shuffle karanakam inna...</p>
+      <div class="spinner" style="margin:1.5rem auto 0;"></div>
+    </div>`;
+    return;
+  }
+
+  // Shuffled — countdown shown briefly? Only on first render after shuffle
+  // Check if I already have a card
+  if (myNum !== undefined) {
+    // Show my card
+    body.innerHTML = `<div class="my-card-panel">
+      <div class="mcp-title">ඔයාගේ Card</div>
+      <div class="flip-hint ${myFlipped?'gone':''}">👆 Tap කරලා reveal කරන්න</div>
+      <div class="card-scene" onclick="${myFlipped ? '' : `flipCard()`}">
+        <div class="card-3d ${myFlipped?'is-flipped':''}">
+          <div class="card-face card-back-face">
+            <div class="cb-ring"><div class="cb-inner">🎴</div></div>
+            <div class="cb-hint">Tap to <span>reveal</span></div>
+          </div>
+          <div class="card-face card-front-face">
+            <div class="cf-num">${myNum}</div>
+            <div class="cf-label">ඔයාගේ lucky number</div>
+            <div class="cf-name">${esc(myMemberData?.username||'')}</div>
+          </div>
+        </div>
+      </div>
+      ${myFlipped
+        ? `<div class="revealed-badge">✓ ඔයාට number <strong>${myNum}</strong> ලැබුණා!</div>`
+        : `<p style="color:var(--muted);font-size:.78rem;">Card ගත්තා. Tap කරලා number reveal කරන්න!</p>`}
+    </div>`;
+    return;
+  }
+
+  // Need to pick a card
+  const takenNums = new Set(Object.values(assignments));
+  body.innerHTML = `<div class="pick-panel">
+    <h2>Card එකක් Pick කරන්න</h2>
+    <p class="sub">Face-down cards 20. ඔයාට ඕන card eka click කරන්න!</p>
+    <div class="cards-pick-grid">
+      ${shuffledOrder.map((num, i) => {
+        const taken = takenNums.has(num);
+        return `<div class="pick-card ${taken?'taken':''}" onclick="${taken?'':'pickCard('+i+')'}">
+          <div class="pc-icon">${taken ? '✓' : '🎴'}</div>
+          <div class="pc-label">${taken ? 'taken' : '#'+(i+1)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  // bottom padding so results strip doesn't cover cards
+  body.style.paddingBottom = lrSection.style.display === 'block' ? '220px' : '2rem';
+}
+
+window.pickCard = async (index) => {
+  const gameSnap = await get(ref(db, 'game'));
+  const game = gameSnap.val();
+  if (!game || !game.shuffled) return;
+  if (game.assignments && game.assignments[me.uid] !== undefined) return;
+  const num = game.shuffledOrder[index];
+  if (num === undefined) return;
+  // Atomic: only pick if num not taken
+  const result = await runTransaction(ref(db, `game/assignments/${me.uid}`), current => {
+    if (current !== null) return; // already picked
+    // check num not taken
+    return undefined; // we'll handle collision below
+  });
+  // simpler approach: just set, race condition low for small groups
+  const takenSnap = await get(ref(db, 'game/assignments'));
+  const taken = takenSnap.val() || {};
+  if (Object.values(taken).includes(num)) { toast('Card eka taken! Wena ekak try karanna.','error'); return; }
+  if (taken[me.uid] !== undefined) return;
+  await update(ref(db, 'game/assignments'), { [me.uid]: num });
+  toast('Card eka picked! Flip karanna!','success');
+};
+
+window.flipCard = async () => {
+  const gameSnap = await get(ref(db, 'game'));
+  const game = gameSnap.val();
+  if (!game) return;
+  if (!game.assignments || game.assignments[me.uid] === undefined) return;
+  if (game.flipped && game.flipped[me.uid]) return;
+  await update(ref(db, 'game/flipped'), { [me.uid]: true });
+};
+
+window.toggleResults = () => {
+  lrExpanded = !lrExpanded;
+  const grid = document.getElementById('lr-grid');
+  const btn = document.querySelector('.lr-toggle');
+  grid.style.display = lrExpanded ? 'grid' : 'none';
+  btn.textContent = lrExpanded ? 'hide ▾' : 'show ▸';
+};
+
+// ── UTILS ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type||''}`;
+  setTimeout(()=>t.className='toast',2500);
+}
+
+window.toast = toast;
+window.signOutUser = signOutUser;
+</script>
+</body>
+</html>
