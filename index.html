@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seettuwa — Join</title>
+<title>Seettuwa</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -15,8 +15,6 @@
   --text:#e8eaf6;--muted:#7b80a8;--faint:#3a3f60;
 }
 body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
-
-/* ── SCREENS ── */
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;}
 
@@ -30,114 +28,130 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 .google-btn:hover{border-color:var(--accent);background:var(--s3);}
 .google-btn svg{width:22px;height:22px;flex-shrink:0;}
 
-/* SET USERNAME */
+/* USERNAME */
 #s-username{align-items:center;justify-content:center;padding:1.5rem;}
 .uname-card{background:var(--s1);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:400px;text-align:center;}
-.uname-card .user-preview{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;margin-bottom:1.5rem;}
-.uname-card .user-preview img{width:38px;height:38px;border-radius:50%;}
-.uname-card .user-preview .uinit{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;}
-.uname-card .user-preview .uinfo{flex:1;text-align:left;}
-.uname-card .user-preview .uinfo .un{font-size:.88rem;font-weight:700;}
-.uname-card .user-preview .uinfo .ue{font-size:.7rem;color:var(--muted);}
-.uname-card h2{font-size:1.2rem;font-weight:800;margin-bottom:.4rem;}
-.uname-card p{color:var(--muted);font-size:.82rem;margin-bottom:1.2rem;}
+.up-row{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.8rem 1rem;margin-bottom:1.5rem;text-align:left;}
+.up-photo{width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.up-init{width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0;}
+.up-info{flex:1;min-width:0;}
+.up-name{font-size:.88rem;font-weight:700;}
+.up-email{font-size:.7rem;color:var(--muted);}
 .text-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;text-align:center;outline:none;transition:border-color .2s;margin-bottom:10px;}
 .text-input:focus{border-color:var(--accent);}
 .text-input::placeholder{color:var(--muted);font-weight:400;}
-.primary-btn{width:100%;background:var(--accent);border:none;border-radius:12px;padding:13px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:#fff;cursor:pointer;transition:opacity .2s,transform .1s;}
+.primary-btn{width:100%;background:var(--accent);border:none;border-radius:12px;padding:13px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;color:#fff;cursor:pointer;transition:opacity .2s;}
 .primary-btn:hover{opacity:.85;}
-.primary-btn:active{transform:scale(.98);}
-.primary-btn:disabled{opacity:.4;cursor:not-allowed;}
 .err-msg{color:var(--danger);font-size:.78rem;margin-top:8px;min-height:18px;}
 
 /* WAITING */
-#s-waiting{flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center;gap:1rem;}
-#s-waiting .w-icon{font-size:3.5rem;}
-#s-waiting h2{font-size:1.3rem;font-weight:800;}
-#s-waiting p{color:var(--muted);font-size:.88rem;line-height:1.6;max-width:340px;}
+#s-waiting{flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:1rem;}
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .9s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .pending-chip{background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.3);color:var(--warn);border-radius:20px;padding:6px 16px;font-size:.78rem;font-weight:700;}
 .rejected-chip{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);color:var(--danger);border-radius:20px;padding:6px 16px;font-size:.78rem;font-weight:700;}
-
-/* MAIN GAME */
-#s-game{flex-direction:column;}
-.game-header{background:var(--s1);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.game-header .logo{font-size:1rem;font-weight:800;color:var(--accent);}
-.user-pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.78rem;}
-.user-pill img,.user-pill .uinit-sm{width:24px;height:24px;border-radius:50%;}
-.uinit-sm{background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;}
-.btn-out{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.btn-out{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:.78rem;cursor:pointer;transition:all .2s;}
 .btn-out:hover{color:var(--danger);border-color:var(--danger);}
 
-/* MEMBERS LIST STRIP */
-.members-strip{background:var(--s2);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;}
-.members-strip::-webkit-scrollbar{display:none;}
-.strip-label{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);flex-shrink:0;}
-.strip-member{display:flex;align-items:center;gap:5px;background:var(--s3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:.72rem;white-space:nowrap;flex-shrink:0;}
-.strip-member .dot{width:5px;height:5px;border-radius:50%;}
-.strip-member .dot.on{background:var(--success);box-shadow:0 0 4px var(--success);}
-.strip-member .dot.off{background:var(--faint);}
-.strip-member.has-num{border-color:rgba(0,229,204,.3);}
-.strip-member .snum{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent2);}
+/* GAME */
+#s-game{flex-direction:column;}
+.game-header{background:var(--s1);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.game-header .logo{font-size:1rem;font-weight:800;color:var(--accent);}
+.user-pill{display:flex;align-items:center;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.78rem;}
+.up-av{width:24px;height:24px;border-radius:50%;object-fit:cover;}
+.up-av-init{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;}
 
-.game-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
+/* main game layout: left=game area, right=chat+members */
+.game-layout{flex:1;display:grid;grid-template-columns:1fr 280px;overflow:hidden;}
+@media(max-width:700px){.game-layout{grid-template-columns:1fr;}}
 
-/* SHUFFLE COUNTDOWN */
-.shuffle-reveal{text-align:center;max-width:500px;width:100%;}
-.shuffle-reveal h2{font-size:1.3rem;font-weight:800;margin-bottom:.5rem;}
-.shuffle-reveal p{color:var(--muted);font-size:.85rem;margin-bottom:2rem;}
-.countdown-ring{width:120px;height:120px;margin:0 auto 1.5rem;position:relative;}
-.countdown-ring svg{transform:rotate(-90deg);}
-.countdown-ring .cr-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;font-weight:800;font-family:'DM Mono',monospace;color:var(--accent);}
+.game-left{overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem;}
 
-/* CARD GRID (pick) */
-.pick-panel{width:100%;max-width:680px;text-align:center;}
+/* members strip */
+.members-panel{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem;}
+.mp-title{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.7rem;}
+.members-list-view{display:flex;flex-direction:column;gap:5px;}
+.mlv-item{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:.45rem .7rem;font-size:.8rem;transition:border-color .2s;}
+.mlv-item.me{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.06);}
+.mlv-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.mlv-dot.on{background:var(--success);box-shadow:0 0 4px var(--success);}
+.mlv-dot.off{background:var(--faint);}
+.mlv-name{flex:1;font-weight:700;}
+.mlv-badge{font-family:'DM Mono',monospace;font-size:.7rem;padding:2px 7px;border-radius:5px;}
+.mlv-badge.picked{background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);color:var(--accent);}
+.mlv-badge.revealed{background:rgba(0,229,204,.1);border:1px solid rgba(0,229,204,.3);color:var(--accent2);}
+.mlv-num{font-family:'DM Mono',monospace;color:var(--accent2);font-size:.85rem;}
+
+/* game states */
+.wait-box{text-align:center;padding:2rem;}
+.wait-box .wi{font-size:3rem;margin-bottom:.8rem;}
+.wait-box h2{font-size:1.2rem;font-weight:800;margin-bottom:.4rem;}
+.wait-box p{color:var(--muted);font-size:.85rem;line-height:1.6;}
+
 .pick-panel h2{font-size:1.1rem;font-weight:800;margin-bottom:.3rem;}
-.pick-panel .sub{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;}
-.cards-pick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.pick-sub{color:var(--muted);font-size:.82rem;margin-bottom:1.2rem;}
+.cards-pick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
 @media(max-width:500px){.cards-pick-grid{grid-template-columns:repeat(4,1fr);}}
-.pick-card{aspect-ratio:2/3;background:var(--s1);border:2px solid var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .2s;position:relative;user-select:none;}
-.pick-card:not(.taken):hover{border-color:var(--accent);background:var(--s3);transform:translateY(-4px) scale(1.04);}
-.pick-card.taken{opacity:.3;cursor:not-allowed;}
-.pick-card .pc-icon{font-size:1.4rem;}
-.pick-card .pc-label{font-size:.55rem;font-family:'DM Mono',monospace;color:var(--muted);}
+.pick-card{aspect-ratio:2/3;background:var(--s1);border:2px solid var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all .2s;user-select:none;}
+.pick-card:not(.taken):hover{border-color:var(--accent);background:var(--s3);transform:translateY(-3px) scale(1.04);}
+.pick-card.taken{opacity:.28;cursor:not-allowed;}
+.pick-card .pc-i{font-size:1.3rem;}
+.pick-card .pc-l{font-size:.5rem;font-family:'DM Mono',monospace;color:var(--muted);}
 
-/* MY CARD (flip) */
-.my-card-panel{text-align:center;max-width:300px;width:100%;}
-.my-card-panel .mcp-title{font-size:.82rem;color:var(--muted);margin-bottom:.5rem;font-weight:600;}
-.flip-hint{color:var(--muted);font-size:.75rem;margin-bottom:1rem;animation:blink 1.8s infinite;}
+.my-card-panel{text-align:center;}
+.flip-hint{color:var(--muted);font-size:.78rem;margin-bottom:.8rem;animation:blink 1.8s infinite;}
 @keyframes blink{0%,100%{opacity:.6}50%{opacity:1}}
 .flip-hint.gone{visibility:hidden;}
-.card-scene{width:180px;height:270px;perspective:800px;margin:0 auto 1.5rem;cursor:pointer;}
+.card-scene{width:170px;height:255px;perspective:800px;margin:0 auto 1.2rem;cursor:pointer;}
 .card-3d{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,0,.2,1);}
-.card-3d.is-flipped{transform:rotateY(180deg);}
-.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--border);}
-.card-back-face{background:linear-gradient(135deg,#1a1a35,#252550);border-color:var(--accent);}
-.card-back-face .cb-ring{width:80px;height:80px;border-radius:50%;border:2px solid rgba(108,99,255,.3);display:flex;align-items:center;justify-content:center;}
-.card-back-face .cb-inner{width:52px;height:52px;border-radius:50%;border:2px solid rgba(108,99,255,.5);display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
-.card-back-face .cb-hint{font-size:.68rem;color:var(--muted);margin-top:.8rem;}
-.card-back-face .cb-hint span{color:var(--accent);}
-.card-front-face{background:linear-gradient(135deg,#0d2030,#0d2540);border-color:var(--accent2);transform:rotateY(180deg);}
-.card-front-face .cf-num{font-family:'DM Mono',monospace;font-size:4.5rem;font-weight:500;color:var(--accent2);line-height:1;text-shadow:0 0 30px rgba(0,229,204,.4);}
-.card-front-face .cf-label{font-size:.68rem;color:var(--muted);margin-top:.4rem;}
-.card-front-face .cf-name{font-size:.85rem;font-weight:700;color:var(--text);margin-top:.2rem;}
-.revealed-badge{background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.25);border-radius:12px;padding:.7rem 1.2rem;color:var(--accent2);font-size:.82rem;font-weight:700;}
+.card-3d.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid var(--border);}
+.cf-back{background:linear-gradient(135deg,#1a1a35,#252550);border-color:var(--accent);}
+.cf-back .cbr{width:75px;height:75px;border-radius:50%;border:2px solid rgba(108,99,255,.3);display:flex;align-items:center;justify-content:center;}
+.cf-back .cbi{width:50px;height:50px;border-radius:50%;border:2px solid rgba(108,99,255,.5);display:flex;align-items:center;justify-content:center;font-size:1.4rem;}
+.cf-back .cbh{font-size:.65rem;color:var(--muted);margin-top:.7rem;}
+.cf-back .cbh span{color:var(--accent);}
+.cf-front{background:linear-gradient(135deg,#0d2030,#0d2540);border-color:var(--accent2);transform:rotateY(180deg);}
+.cf-front .cfn{font-family:'DM Mono',monospace;font-size:4rem;font-weight:500;color:var(--accent2);line-height:1;text-shadow:0 0 25px rgba(0,229,204,.4);}
+.cf-front .cfl{font-size:.65rem;color:var(--muted);margin-top:.4rem;}
+.cf-front .cfname{font-size:.82rem;font-weight:700;color:var(--text);margin-top:.2rem;}
+.revealed-badge{background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.25);border-radius:12px;padding:.7rem 1.2rem;color:var(--accent2);font-size:.82rem;font-weight:700;margin-top:.8rem;}
 
-/* LIVE RESULTS TABLE */
-.live-results-section{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:.8rem 1.5rem;max-height:38vh;overflow-y:auto;}
-.lr-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
-.lr-header h3{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
-.lr-toggle{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;}
-.lr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;}
-.lr-item{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.5rem .7rem;display:flex;align-items:center;gap:8px;}
-.lr-item .lnum{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--accent2);width:24px;text-align:center;flex-shrink:0;}
-.lr-item .lname{flex:1;font-size:.75rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lr-item .lstatus{width:7px;height:7px;border-radius:50%;background:var(--faint);flex-shrink:0;}
-.lr-item .lstatus.flipped{background:var(--accent3);box-shadow:0 0 4px var(--accent3);}
-.lr-item .lstatus.picked{background:var(--accent);}
+/* live results */
+.lr-panel{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem;}
+.lr-title{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.7rem;}
+.lr-grid{display:flex;flex-direction:column;gap:4px;}
+.lr-row{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:.45rem .7rem;font-size:.78rem;}
+.lr-row.me{border-color:rgba(108,99,255,.35);}
+.lr-num{font-family:'DM Mono',monospace;color:var(--accent2);width:24px;text-align:center;flex-shrink:0;}
+.lr-name{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lr-status{width:7px;height:7px;border-radius:50%;background:var(--faint);flex-shrink:0;}
+.lr-status.flipped{background:var(--accent3);box-shadow:0 0 4px var(--accent3);}
+.lr-status.picked{background:var(--accent);}
 
-/* TOAST */
+/* RIGHT: chat */
+.game-right{background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:.9rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+.chat-header h3{font-size:.8rem;font-weight:800;}
+.chat-notif{font-size:.65rem;color:var(--accent3);margin-top:2px;min-height:14px;}
+.chat-messages{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:7px;}
+.chat-messages::-webkit-scrollbar{width:4px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.msg-bubble{max-width:92%;padding:.5rem .75rem;border-radius:12px;font-size:.78rem;line-height:1.5;}
+.msg-from-admin{background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-bottom-left-radius:3px;align-self:flex-start;}
+.msg-from-me{background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2);border-bottom-right-radius:3px;align-self:flex-end;text-align:right;}
+.msg-from-other{background:var(--s2);border:1px solid var(--border);border-bottom-left-radius:3px;align-self:flex-start;}
+.msg-broadcast{background:rgba(255,190,11,.07);border:1px solid rgba(255,190,11,.2);align-self:center;text-align:center;font-size:.72rem;color:var(--warn);border-radius:12px;}
+.msg-meta{font-size:.58rem;color:var(--muted);margin-bottom:2px;}
+.msg-text{color:var(--text);}
+.msg-private-tag{font-size:.58rem;color:var(--accent3);margin-top:2px;}
+.chat-inp-row{padding:.7rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:6px;}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;outline:none;resize:none;min-height:36px;max-height:80px;transition:border-color .2s;}
+.chat-inp:focus{border-color:var(--accent);}
+.send-btn{background:var(--accent);border:none;border-radius:10px;padding:8px 12px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;}
+.send-btn:hover{opacity:.85;}
+.new-msg-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--accent3);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;font-weight:800;margin-left:4px;vertical-align:middle;}
+
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:.8rem 1.2rem;font-size:.82rem;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{border-color:rgba(46,213,115,.4);color:var(--success);}
@@ -160,47 +174,54 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
   </div>
 </div>
 
-<!-- S2: SET USERNAME -->
+<!-- S2: USERNAME -->
 <div class="screen" id="s-username">
   <div class="uname-card">
-    <div class="user-preview" id="uname-preview"></div>
-    <h2>ඔයාගේ නම set කරන්න</h2>
-    <p>Game ඇතුළේ පෙනෙන name එක type කරලා<br>"Send Request" click කරන්න</p>
-    <input type="text" class="text-input" id="username-inp" placeholder="ඔයාගේ නම..." maxlength="20" autocomplete="off">
-    <button class="primary-btn" onclick="sendJoinRequest()">📨 Send Request to Admin</button>
+    <div class="up-row" id="up-row"></div>
+    <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:.4rem;">ඔයාගේ නම set කරන්න</h2>
+    <p style="color:var(--muted);font-size:.82rem;margin-bottom:1.2rem;">Game ඇතුළේ පෙනෙන name type කරලා request send කරන්න</p>
+    <input type="text" class="text-input" id="uname-inp" placeholder="ඔයාගේ නම..." maxlength="20" autocomplete="off">
+    <button class="primary-btn" onclick="sendRequest()">📨 Send Request to Admin</button>
     <div class="err-msg" id="uname-err"></div>
   </div>
 </div>
 
-<!-- S3: WAITING (pending / rejected) -->
+<!-- S3: WAITING -->
 <div class="screen" id="s-waiting">
-  <span class="w-icon" id="w-icon">⏳</span>
-  <h2 id="w-title">Waiting for Admin</h2>
-  <p id="w-desc">ඔයාගේ request admin approve කරනකම් ඉන්න...</p>
-  <div id="w-spinner" class="spinner"></div>
-  <div id="w-status-chip"></div>
-  <button class="btn-out" onclick="signOutUser()" style="margin-top:1rem;">Cancel & Logout</button>
+  <span style="font-size:3.5rem" id="w-icon">⏳</span>
+  <h2 style="font-size:1.3rem;font-weight:800;" id="w-title">Waiting for Admin</h2>
+  <p style="color:var(--muted);font-size:.88rem;max-width:320px;line-height:1.6;text-align:center;" id="w-desc"></p>
+  <div class="spinner" id="w-spin"></div>
+  <div id="w-chip"></div>
+  <button class="btn-out" onclick="doSignOut()" style="margin-top:1rem;">Cancel & Logout</button>
 </div>
 
-<!-- S4: MAIN GAME -->
+<!-- S4: GAME -->
 <div class="screen" id="s-game">
   <div class="game-header">
     <div class="logo">🎴 Seettuwa</div>
     <div style="display:flex;align-items:center;gap:8px;">
-      <div class="user-pill" id="game-user-pill"></div>
-      <button class="btn-out" onclick="signOutUser()">Leave</button>
+      <div class="user-pill" id="game-pill"></div>
+      <button class="btn-out" onclick="doSignOut()">Leave</button>
     </div>
   </div>
-  <div class="members-strip" id="members-strip">
-    <span class="strip-label">Members</span>
-  </div>
-  <div class="game-body" id="game-body"></div>
-  <div class="live-results-section" id="live-results-section" style="display:none;">
-    <div class="lr-header">
-      <h3>Live Results</h3>
-      <button class="lr-toggle" onclick="toggleResults()">hide ▾</button>
+  <div class="game-layout">
+    <!-- LEFT -->
+    <div class="game-left" id="game-left">
+      <div class="wait-box"><div class="wi">⏳</div><h2>Loading...</h2></div>
     </div>
-    <div class="lr-grid" id="lr-grid"></div>
+    <!-- RIGHT: chat -->
+    <div class="game-right">
+      <div class="chat-header">
+        <h3>💬 Chat <span id="chat-badge" style="display:none" class="new-msg-badge">!</span></h3>
+        <div class="chat-notif" id="chat-notif"></div>
+      </div>
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-inp-row">
+        <textarea class="chat-inp" id="chat-inp" placeholder="Admin kata message..." rows="1"></textarea>
+        <button class="send-btn" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -210,7 +231,7 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut as fbSignOut }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getDatabase, ref, set, get, onValue, update, serverTimestamp, runTransaction }
+import { getDatabase, ref, set, get, onValue, update, push, serverTimestamp, query, orderByChild, limitToLast }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -228,379 +249,300 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 let me = null;
-let myMemberData = null;
-let presenceInterval = null;
-let gameListener = null;
-let memberListener = null;
-let requestListener = null;
-let lrExpanded = true;
-let countdownTimer = null;
+let myData = null;
+let presInt = null;
+let reqUnsub = null, gameUnsub = null, memberUnsub = null, onlineUnsub = null, msgUnsub = null;
+let membersCache = {};
+let chatVisible = true;
+let lastMsgCount = 0;
 
-// ── AUTH ──
 window.signInGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch(e) {
-    document.getElementById('login-err').textContent = e.message;
-  }
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch(e){ document.getElementById('login-err').textContent = e.message; }
 };
-
-window.signOutUser = async () => {
-  clearPresence();
-  clearListeners();
+window.doSignOut = async () => {
+  clearPresence(); clearListeners();
   await fbSignOut(auth);
 };
 
 onAuthStateChanged(auth, async user => {
   me = user;
-  if (!user) { showScreen('s-login'); return; }
-  // check request/member status
+  if(!user){ showScreen('s-login'); return; }
   await routeUser();
 });
 
-async function routeUser() {
-  if (!me) return;
-  const [memberSnap, requestSnap] = await Promise.all([
-    get(ref(db, `members/${me.uid}`)),
-    get(ref(db, `requests/${me.uid}`))
-  ]);
-
-  if (memberSnap.exists()) {
-    // accepted — go to game
-    myMemberData = memberSnap.val();
+async function routeUser(){
+  const [mSnap, rSnap] = await Promise.all([get(ref(db,`members/${me.uid}`)),get(ref(db,`requests/${me.uid}`))]);
+  if(mSnap.exists()){
+    myData = mSnap.val();
     enterGame();
-  } else if (requestSnap.exists()) {
-    const req = requestSnap.val();
-    if (req.status === 'accepted') {
-      // Just accepted but member doc not written yet, wait
-      waitingScreen('pending');
-      listenRequest();
-    } else if (req.status === 'rejected') {
-      waitingScreen('rejected');
-    } else {
-      waitingScreen('pending');
-      listenRequest();
-    }
+  } else if(rSnap.exists()){
+    const r = rSnap.val();
+    if(r.status==='rejected') showWait('rejected');
+    else { showWait('pending'); listenReq(); }
   } else {
-    // New user — set username
-    showUsernameScreen();
+    showUname();
   }
 }
 
-// ── USERNAME SCREEN ──
-function showUsernameScreen() {
+function showUname(){
   showScreen('s-username');
-  const prev = document.getElementById('uname-preview');
-  const photo = me.photoURL;
-  const name = me.displayName || me.email;
-  prev.innerHTML = `
-    ${photo ? `<img src="${esc(photo)}" style="width:38px;height:38px;border-radius:50%;">` : `<div class="uinit" style="width:38px;height:38px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;">${name[0].toUpperCase()}</div>`}
-    <div class="uinfo" style="flex:1;text-align:left;">
-      <div class="un" style="font-size:.88rem;font-weight:700;">${esc(name)}</div>
-      <div class="ue" style="font-size:.7rem;color:var(--muted);">${esc(me.email)}</div>
-    </div>`;
-  document.getElementById('username-inp').value = me.displayName ? me.displayName.split(' ')[0] : '';
+  const photo = me.photoURL, name = me.displayName||me.email;
+  document.getElementById('up-row').innerHTML=`
+    ${photo?`<img class="up-photo" src="${esc(photo)}">`:`<div class="up-init">${name[0].toUpperCase()}</div>`}
+    <div class="up-info"><div class="up-name">${esc(name)}</div><div class="up-email">${esc(me.email)}</div></div>`;
+  document.getElementById('uname-inp').value = me.displayName?me.displayName.split(' ')[0]:'';
 }
 
-window.sendJoinRequest = async () => {
-  const uname = document.getElementById('username-inp').value.trim();
-  if (!uname) { document.getElementById('uname-err').textContent = 'Name danna!'; return; }
-  if (uname.length < 2) { document.getElementById('uname-err').textContent = 'Name tika diga kරන්න'; return; }
-
-  // check if username taken
-  const membersSnap = await get(ref(db, 'members'));
-  const members = membersSnap.val() || {};
-  const taken = Object.values(members).some(m => m.username?.toLowerCase() === uname.toLowerCase());
-  if (taken) { document.getElementById('uname-err').textContent = 'Me name eka use wenawa! Wenas name ekak denna.'; return; }
-
-  await set(ref(db, `requests/${me.uid}`), {
-    uid: me.uid,
-    username: uname,
-    displayName: me.displayName || uname,
-    email: me.email,
-    photoURL: me.photoURL || '',
-    status: 'pending',
-    requestedAt: serverTimestamp()
+window.sendRequest = async () => {
+  const uname = document.getElementById('uname-inp').value.trim();
+  if(!uname){ document.getElementById('uname-err').textContent='Name danna!'; return; }
+  if(uname.length<2){ document.getElementById('uname-err').textContent='Tika diga kරන්න'; return; }
+  const mSnap = await get(ref(db,'members'));
+  const taken = Object.values(mSnap.val()||{}).some(m=>m.username?.toLowerCase()===uname.toLowerCase());
+  if(taken){ document.getElementById('uname-err').textContent='Me name eka use wenawa! Wenas ekak denna.'; return; }
+  await set(ref(db,`requests/${me.uid}`),{
+    uid:me.uid, username:uname, displayName:me.displayName||uname,
+    email:me.email, photoURL:me.photoURL||'', status:'pending', requestedAt:serverTimestamp()
   });
-  waitingScreen('pending');
-  listenRequest();
+  showWait('pending'); listenReq();
 };
 
-// ── WAITING SCREEN ──
-function waitingScreen(status) {
+function showWait(status){
   showScreen('s-waiting');
-  const icon = document.getElementById('w-icon');
-  const title = document.getElementById('w-title');
-  const desc = document.getElementById('w-desc');
-  const chip = document.getElementById('w-status-chip');
-  const spinner = document.getElementById('w-spinner');
-
-  if (status === 'pending') {
-    icon.textContent = '⏳';
-    title.textContent = 'Request Sent!';
-    desc.textContent = 'Admin approve karanamath inna... oba ekata join wenna puluwan wenawa.';
-    chip.innerHTML = '<span class="pending-chip">⏳ Pending Approval</span>';
-    spinner.style.display = 'block';
-  } else if (status === 'rejected') {
-    icon.textContent = '😔';
-    title.textContent = 'Request Rejected';
-    desc.textContent = 'Admin oba reject karanawa. Wenas account ekakin try karanna puluwan.';
-    chip.innerHTML = '<span class="rejected-chip">✕ Rejected</span>';
-    spinner.style.display = 'none';
-  }
+  document.getElementById('w-icon').textContent = status==='rejected'?'😔':'⏳';
+  document.getElementById('w-title').textContent = status==='rejected'?'Request Rejected':'Request Sent!';
+  document.getElementById('w-desc').textContent = status==='rejected'?'Admin oba reject karanawa.':'Admin approve karanamath inna...';
+  document.getElementById('w-spin').style.display = status==='rejected'?'none':'block';
+  document.getElementById('w-chip').innerHTML = status==='rejected'?
+    '<span class="rejected-chip">✕ Rejected</span>':'<span class="pending-chip">⏳ Pending</span>';
 }
 
-function listenRequest() {
-  if (requestListener) requestListener();
-  requestListener = onValue(ref(db, `requests/${me.uid}`), async snap => {
-    const data = snap.val();
-    if (!data) return;
-    if (data.status === 'accepted') {
-      // Check if member doc is written
-      const mSnap = await get(ref(db, `members/${me.uid}`));
-      if (mSnap.exists()) {
-        myMemberData = mSnap.val();
-        if (requestListener) { requestListener(); requestListener = null; }
-        enterGame();
-      }
-    } else if (data.status === 'rejected') {
-      waitingScreen('rejected');
-    }
+function listenReq(){
+  if(reqUnsub){ reqUnsub(); reqUnsub=null; }
+  reqUnsub = onValue(ref(db,`requests/${me.uid}`), async snap=>{
+    const d=snap.val(); if(!d) return;
+    if(d.status==='accepted'){
+      const mSnap=await get(ref(db,`members/${me.uid}`));
+      if(mSnap.exists()){ myData=mSnap.val(); if(reqUnsub){reqUnsub();reqUnsub=null;} enterGame(); }
+    } else if(d.status==='rejected'){ showWait('rejected'); }
   });
 }
 
-// ── GAME ──
-function enterGame() {
+function enterGame(){
   showScreen('s-game');
+  // pill
+  const pill = document.getElementById('game-pill');
+  const uname = myData?.username||me.displayName||'?';
+  const photo = me.photoURL;
+  pill.innerHTML=`${photo?`<img class="up-av" src="${esc(photo)}">`:`<div class="up-av-init">${uname[0].toUpperCase()}</div>`}<span>${esc(uname)}</span>`;
   setupPresence();
-  setupGameListeners();
-  updateGameUserPill();
+  setupListeners();
 }
 
-function updateGameUserPill() {
-  const pill = document.getElementById('game-user-pill');
-  const uname = myMemberData?.username || me?.displayName || '?';
-  const photo = me?.photoURL;
-  const init = uname[0].toUpperCase();
-  pill.innerHTML = `
-    ${photo ? `<img src="${esc(photo)}" style="width:24px;height:24px;border-radius:50%;">` : `<div class="uinit-sm" style="background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;">${init}</div>`}
-    <span>${esc(uname)}</span>`;
-}
-
-function setupPresence() {
+function setupPresence(){
   clearPresence();
-  const tick = () => set(ref(db, `online/${me.uid}`), Date.now());
-  tick();
-  presenceInterval = setInterval(tick, 6000);
-  window.addEventListener('beforeunload', clearPresence);
+  const tick=()=>set(ref(db,`online/${me.uid}`),Date.now());
+  tick(); presInt=setInterval(tick,6000);
+  window.addEventListener('beforeunload',clearPresence);
+}
+function clearPresence(){
+  if(presInt) clearInterval(presInt);
+  if(me) try{set(ref(db,`online/${me.uid}`),null);}catch{}
+}
+function clearListeners(){
+  [gameUnsub,memberUnsub,onlineUnsub,msgUnsub,reqUnsub].forEach(u=>u&&u());
+  gameUnsub=memberUnsub=onlineUnsub=msgUnsub=reqUnsub=null;
 }
 
-function clearPresence() {
-  if (presenceInterval) clearInterval(presenceInterval);
-  if (me) {
-    try { set(ref(db, `online/${me.uid}`), null); } catch {}
-  }
-}
-
-function clearListeners() {
-  if (gameListener) { gameListener(); gameListener = null; }
-  if (memberListener) { memberListener(); memberListener = null; }
-  if (requestListener) { requestListener(); requestListener = null; }
-}
-
-function setupGameListeners() {
+function setupListeners(){
   clearListeners();
-
-  // Listen to both members+game+online simultaneously
-  let membersData = {}, gameData = {}, onlineData = {};
-
-  memberListener = onValue(ref(db, 'members'), snap => {
-    membersData = snap.val() || {};
-    renderGameView(membersData, gameData, onlineData);
-  });
-
-  gameListener = onValue(ref(db, 'game'), snap => {
-    gameData = snap.val() || {};
-    renderGameView(membersData, gameData, onlineData);
-  });
-
-  // Online
-  onValue(ref(db, 'online'), snap => {
-    onlineData = snap.val() || {};
-    renderGameView(membersData, gameData, onlineData);
-  });
+  let G={}, M={}, O={};
+  memberUnsub = onValue(ref(db,'members'), s=>{ M=s.val()||{}; membersCache=M; render(M,G,O); });
+  gameUnsub   = onValue(ref(db,'game'),    s=>{ G=s.val()||{}; render(M,G,O); });
+  onlineUnsub = onValue(ref(db,'online'),  s=>{ O=s.val()||{}; render(M,G,O); });
+  msgUnsub    = onValue(query(ref(db,'messages'),orderByChild('ts'),limitToLast(100)), s=>renderChat(s.val()||{}));
 }
 
-function renderGameView(members, game, online) {
-  const now = Date.now();
+function render(members, game, online){
+  const now=Date.now();
+  const onlineUids = Object.keys(online).filter(uid=>(now-online[uid])<12000);
+  const assignments = game.assignments||{};
+  const flipped = game.flipped||{};
+  const cardCount = game.cardCount||20;
   const memberEntries = Object.entries(members);
-  const isShuffled = game.shuffled || false;
-  const assignments = game.assignments || {};
-  const flipped = game.flipped || {};
-  const shuffledOrder = game.shuffledOrder || [];
-  const onlineUids = Object.keys(online).filter(uid => (now - online[uid]) < 12000);
-
-  // ── Members strip ──
-  const strip = document.getElementById('members-strip');
-  strip.innerHTML = `<span class="strip-label">Members</span>` +
-    memberEntries.map(([uid, m]) => {
-      const isOnline = onlineUids.includes(uid);
-      const num = assignments[uid];
-      const isFlipped = flipped[uid];
-      return `<div class="strip-member ${num!==undefined?'has-num':''}">
-        <span class="dot ${isOnline?'on':'off'}"></span>
-        <span>${esc(m.username||m.displayName)}</span>
-        ${isFlipped ? `<span class="snum">✓${num}</span>` : num!==undefined ? `<span class="snum">#</span>` : ''}
-      </div>`;
-    }).join('');
-
-  // ── Live results ──
-  const lrSection = document.getElementById('live-results-section');
-  const lrGrid = document.getElementById('lr-grid');
-  if (memberEntries.length > 0 && isShuffled) {
-    lrSection.style.display = 'block';
-    lrGrid.innerHTML = memberEntries.map(([uid, m]) => {
-      const num = assignments[uid];
-      const isFlipped = flipped[uid];
-      return `<div class="lr-item">
-        <div class="lnum">${isFlipped ? num : (num!==undefined ? '?' : '—')}</div>
-        <div class="lname">${esc(m.username||m.displayName)}</div>
-        <div class="lstatus ${isFlipped?'flipped':num!==undefined?'picked':''}"></div>
-      </div>`;
-    }).join('');
-  } else {
-    lrSection.style.display = 'none';
-  }
-
-  // ── Main game body ──
-  const body = document.getElementById('game-body');
   const myUid = me.uid;
   const myNum = assignments[myUid];
   const myFlipped = flipped[myUid];
 
-  // Check if I'm still a member
-  if (!members[myUid]) {
-    body.innerHTML = `<div style="text-align:center;"><div style="font-size:3rem;margin-bottom:1rem;">😔</div><h2>Removed</h2><p style="color:var(--muted);margin-top:.5rem;">Admin oba remove karanawa.</p></div>`;
+  if(!members[myUid]){
+    document.getElementById('game-left').innerHTML='<div class="wait-box"><div class="wi">😔</div><h2>Removed</h2><p style="color:var(--muted)">Admin oba remove karanawa.</p></div>';
     return;
   }
 
-  if (!isShuffled) {
-    // waiting for shuffle
-    body.innerHTML = `<div style="text-align:center;max-width:380px;">
-      <div style="font-size:3rem;margin-bottom:1rem;">⏳</div>
-      <h2 style="font-size:1.2rem;margin-bottom:.5rem;">Waiting for Admin</h2>
-      <p style="color:var(--muted);font-size:.85rem;">Admin cards shuffle karanakam inna...</p>
-      <div class="spinner" style="margin:1.5rem auto 0;"></div>
-    </div>`;
-    return;
-  }
-
-  // Shuffled — countdown shown briefly? Only on first render after shuffle
-  // Check if I already have a card
-  if (myNum !== undefined) {
-    // Show my card
-    body.innerHTML = `<div class="my-card-panel">
-      <div class="mcp-title">ඔයාගේ Card</div>
-      <div class="flip-hint ${myFlipped?'gone':''}">👆 Tap කරලා reveal කරන්න</div>
-      <div class="card-scene" onclick="${myFlipped ? '' : `flipCard()`}">
-        <div class="card-3d ${myFlipped?'is-flipped':''}">
-          <div class="card-face card-back-face">
-            <div class="cb-ring"><div class="cb-inner">🎴</div></div>
-            <div class="cb-hint">Tap to <span>reveal</span></div>
-          </div>
-          <div class="card-face card-front-face">
-            <div class="cf-num">${myNum}</div>
-            <div class="cf-label">ඔයාගේ lucky number</div>
-            <div class="cf-name">${esc(myMemberData?.username||'')}</div>
-          </div>
-        </div>
-      </div>
-      ${myFlipped
-        ? `<div class="revealed-badge">✓ ඔයාට number <strong>${myNum}</strong> ලැබුණා!</div>`
-        : `<p style="color:var(--muted);font-size:.78rem;">Card ගත්තා. Tap කරලා number reveal කරන්න!</p>`}
-    </div>`;
-    return;
-  }
-
-  // Need to pick a card
-  const takenNums = new Set(Object.values(assignments));
-  body.innerHTML = `<div class="pick-panel">
-    <h2>Card එකක් Pick කරන්න</h2>
-    <p class="sub">Face-down cards 20. ඔයාට ඕන card eka click කරන්න!</p>
-    <div class="cards-pick-grid">
-      ${shuffledOrder.map((num, i) => {
-        const taken = takenNums.has(num);
-        return `<div class="pick-card ${taken?'taken':''}" onclick="${taken?'':'pickCard('+i+')'}">
-          <div class="pc-icon">${taken ? '✓' : '🎴'}</div>
-          <div class="pc-label">${taken ? 'taken' : '#'+(i+1)}</div>
+  // members panel
+  const membersHtml = `<div class="members-panel">
+    <div class="mp-title">Members (${memberEntries.length})</div>
+    <div class="members-list-view">
+      ${memberEntries.map(([uid,m])=>{
+        const isOnline=onlineUids.includes(uid);
+        const num=assignments[uid], isFlipped=flipped[uid];
+        const isMe=uid===myUid;
+        return `<div class="mlv-item ${isMe?'me':''}">
+          <span class="mlv-dot ${isOnline?'on':'off'}"></span>
+          <span class="mlv-name">${esc(m.username||m.displayName)}${isMe?' (ඔබ)':''}</span>
+          ${isFlipped?`<span class="mlv-badge revealed">✓${num}</span>`:num!==undefined?`<span class="mlv-badge picked">#</span>`:''}
         </div>`;
       }).join('')}
     </div>
   </div>`;
 
-  // bottom padding so results strip doesn't cover cards
-  body.style.paddingBottom = lrSection.style.display === 'block' ? '220px' : '2rem';
+  // results panel (only if game started)
+  let resultsHtml='';
+  if(game.shuffled){
+    resultsHtml=`<div class="lr-panel">
+      <div class="lr-title">Live Results</div>
+      <div class="lr-grid">
+        ${memberEntries.map(([uid,m])=>{
+          const num=assignments[uid], isFlipped=flipped[uid], isMe=uid===myUid;
+          return `<div class="lr-row ${isMe?'me':''}">
+            <div class="lr-num">${isFlipped?num:(num!==undefined?'?':'—')}</div>
+            <div class="lr-name">${esc(m.username||m.displayName)}</div>
+            <div class="lr-status ${isFlipped?'flipped':num!==undefined?'picked':''}"></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  // main game area
+  let gameHtml='';
+  if(!game.shuffled){
+    gameHtml=`<div class="wait-box"><div class="wi">⏳</div><h2>Admin cards shuffle karanakam inna...</h2><div class="spinner" style="margin:.8rem auto;"></div></div>`;
+  } else if(myNum!==undefined){
+    gameHtml=`<div class="my-card-panel">
+      <div class="flip-hint ${myFlipped?'gone':''}">👆 Card tap කරලා reveal කරන්න</div>
+      <div class="card-scene" onclick="${myFlipped?'':'flipCard()'}">
+        <div class="card-3d ${myFlipped?'flipped':''}">
+          <div class="card-face cf-back">
+            <div class="cbr"><div class="cbi">🎴</div></div>
+            <div class="cbh">Tap to <span>reveal</span></div>
+          </div>
+          <div class="card-face cf-front">
+            <div class="cfn">${myNum}</div>
+            <div class="cfl">ඔයාගේ lucky number</div>
+            <div class="cfname">${esc(myData?.username||'')}</div>
+          </div>
+        </div>
+      </div>
+      ${myFlipped?`<div class="revealed-badge">✓ ඔයාට <strong>${myNum}</strong> ලැබුණා!</div>`:''}
+    </div>`;
+  } else {
+    const takenNums=new Set(Object.values(assignments));
+    const shuffledOrder=game.shuffledOrder||[];
+    gameHtml=`<div class="pick-panel">
+      <h2>Card Pick කරන්න</h2>
+      <p class="pick-sub">Face-down cards ${cardCount}. ඔයාට ඕන card click!</p>
+      <div class="cards-pick-grid">
+        ${shuffledOrder.map((num,i)=>{
+          const taken=takenNums.has(num);
+          return `<div class="pick-card ${taken?'taken':''}" onclick="${taken?'':'pickCard('+i+')'}">
+            <div class="pc-i">${taken?'✓':'🎴'}</div>
+            <div class="pc-l">${taken?'taken':'#'+(i+1)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('game-left').innerHTML = membersHtml + gameHtml + resultsHtml;
 }
 
-window.pickCard = async (index) => {
-  const gameSnap = await get(ref(db, 'game'));
-  const game = gameSnap.val();
-  if (!game || !game.shuffled) return;
-  if (game.assignments && game.assignments[me.uid] !== undefined) return;
-  const num = game.shuffledOrder[index];
-  if (num === undefined) return;
-  // Atomic: only pick if num not taken
-  const result = await runTransaction(ref(db, `game/assignments/${me.uid}`), current => {
-    if (current !== null) return; // already picked
-    // check num not taken
-    return undefined; // we'll handle collision below
+function renderChat(data){
+  const myUid = me?.uid;
+  const myUname = myData?.username||me?.displayName||'?';
+  const box = document.getElementById('chat-messages');
+  const atBottom = box.scrollHeight-box.scrollTop-box.clientHeight<80;
+  const msgs = Object.values(data).sort((a,b)=>(a.ts||0)-(b.ts||0));
+
+  // filter: show messages to 'all' or to me or from me
+  const visible = msgs.filter(m=>
+    m.to==='all' ||
+    m.senderUid===myUid ||
+    m.to===myUid
+  );
+
+  box.innerHTML = visible.map(m=>{
+    const isAdmin = m.role==='admin';
+    const isFromMe = m.senderUid===myUid;
+    const isBroadcast = isAdmin && m.to==='all';
+    const isPrivateToMe = m.to===myUid;
+    const cls = isBroadcast?'msg-broadcast':isAdmin?'msg-from-admin':isFromMe?'msg-from-me':'msg-from-other';
+    const sender = isAdmin?'⚡ Admin':esc(m.senderName||'?');
+    return `<div class="msg-bubble ${cls}">
+      <div class="msg-meta">${isFromMe?'ඔබ':sender}</div>
+      <div class="msg-text">${esc(m.text)}</div>
+      ${isPrivateToMe&&isAdmin?`<div class="msg-private-tag">🔒 ඔබට විතරයි</div>`:''}
+    </div>`;
+  }).join('');
+
+  const newCount = visible.length;
+  if(newCount>lastMsgCount){
+    const diff=newCount-lastMsgCount;
+    if(lastMsgCount>0){
+      const badge=document.getElementById('chat-badge');
+      badge.style.display='inline-flex';
+      badge.textContent=diff;
+      const notif=document.getElementById('chat-notif');
+      notif.textContent='New message!';
+      setTimeout(()=>{badge.style.display='none';notif.textContent='';},3000);
+    }
+  }
+  lastMsgCount=newCount;
+  if(atBottom) box.scrollTop=box.scrollHeight;
+}
+
+window.sendMsg = async () => {
+  const inp = document.getElementById('chat-inp');
+  const text = inp.value.trim();
+  if(!text) return;
+  const uname = myData?.username||me.displayName||'?';
+  await push(ref(db,'messages'),{
+    role:'member', senderUid:me.uid, senderName:uname,
+    to:'all', text, ts:Date.now()
   });
-  // simpler approach: just set, race condition low for small groups
-  const takenSnap = await get(ref(db, 'game/assignments'));
-  const taken = takenSnap.val() || {};
-  if (Object.values(taken).includes(num)) { toast('Card eka taken! Wena ekak try karanna.','error'); return; }
-  if (taken[me.uid] !== undefined) return;
-  await update(ref(db, 'game/assignments'), { [me.uid]: num });
-  toast('Card eka picked! Flip karanna!','success');
+  inp.value='';
+};
+
+document.getElementById('chat-inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+});
+
+window.pickCard = async index => {
+  const gSnap = await get(ref(db,'game'));
+  const game = gSnap.val();
+  if(!game?.shuffled) return;
+  if(game.assignments?.[me.uid]!==undefined) return;
+  const num = game.shuffledOrder?.[index];
+  if(num===undefined) return;
+  const taken = Object.values(game.assignments||{}).includes(num);
+  if(taken){ toast('Card eka taken! Wena ekak try.','error'); return; }
+  await update(ref(db,'game/assignments'),{[me.uid]:num});
+  toast('Card picked! Flip karanna!','success');
 };
 
 window.flipCard = async () => {
-  const gameSnap = await get(ref(db, 'game'));
-  const game = gameSnap.val();
-  if (!game) return;
-  if (!game.assignments || game.assignments[me.uid] === undefined) return;
-  if (game.flipped && game.flipped[me.uid]) return;
-  await update(ref(db, 'game/flipped'), { [me.uid]: true });
+  const gSnap = await get(ref(db,'game'));
+  const game = gSnap.val();
+  if(!game?.assignments?.[me.uid]===undefined) return;
+  if(game?.flipped?.[me.uid]) return;
+  await update(ref(db,'game/flipped'),{[me.uid]:true});
 };
 
-window.toggleResults = () => {
-  lrExpanded = !lrExpanded;
-  const grid = document.getElementById('lr-grid');
-  const btn = document.querySelector('.lr-toggle');
-  grid.style.display = lrExpanded ? 'grid' : 'none';
-  btn.textContent = lrExpanded ? 'hide ▾' : 'show ▸';
-};
-
-// ── UTILS ──
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
-
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function toast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = `toast show ${type||''}`;
-  setTimeout(()=>t.className='toast',2500);
-}
-
-window.toast = toast;
-window.signOutUser = signOutUser;
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type||''}`;setTimeout(()=>t.className='toast',2500);}
+window.toast=toast;
 </script>
 </body>
 </html>
