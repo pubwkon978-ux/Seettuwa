@@ -159,6 +159,18 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{border-color:rgba(46,213,115,.4);color:var(--success);}
 .toast.error{border-color:rgba(255,71,87,.4);color:var(--danger);}
+
+/* PENDING STATE inside game screen */
+.pending-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem;text-align:center;gap:1rem;}
+.pending-panel .pp-icon{font-size:3.5rem;}
+.pending-panel h2{font-size:1.3rem;font-weight:800;}
+.pending-panel p{color:var(--muted);font-size:.87rem;line-height:1.7;max-width:320px;}
+.pending-panel .pp-chip{background:rgba(255,190,11,.1);border:1px solid rgba(255,190,11,.3);color:var(--warn);border-radius:20px;padding:6px 18px;font-size:.78rem;font-weight:700;}
+.pending-panel .pp-chat-hint{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.25);border-radius:12px;padding:.8rem 1.2rem;font-size:.8rem;color:var(--accent);max-width:300px;}
+.rejected-panel{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:2rem;text-align:center;gap:1rem;}
+.rejected-panel .rp-icon{font-size:3.5rem;}
+.rejected-panel h2{font-size:1.3rem;font-weight:800;color:var(--danger);}
+.rejected-panel p{color:var(--muted);font-size:.87rem;line-height:1.7;}
 </style>
 </head>
 <body>
@@ -189,15 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
   </div>
 </div>
 
-<!-- S3: WAITING -->
-<div class="screen" id="s-waiting">
-  <span style="font-size:3.5rem" id="w-icon">⏳</span>
-  <h2 style="font-size:1.3rem;font-weight:800;" id="w-title">Waiting for Admin</h2>
-  <p style="color:var(--muted);font-size:.88rem;max-width:320px;line-height:1.6;text-align:center;" id="w-desc"></p>
-  <div class="spinner" id="w-spin"></div>
-  <div id="w-chip"></div>
-  <button class="btn-out" onclick="doSignOut()" style="margin-top:1rem;">Cancel & Logout</button>
-</div>
+
 
 <!-- S4: GAME -->
 <div class="screen" id="s-game">
@@ -281,11 +285,16 @@ async function routeUser(){
   const [mSnap, rSnap] = await Promise.all([get(ref(db,`members/${me.uid}`)),get(ref(db,`requests/${me.uid}`))]);
   if(mSnap.exists()){
     myData = mSnap.val();
-    enterGame();
+    enterGame(false);
   } else if(rSnap.exists()){
     const r = rSnap.val();
-    if(r.status==='rejected') showWait('rejected');
-    else { showWait('pending'); listenReq(); }
+    if(r.status==='rejected'){
+      enterGame(false, 'rejected');
+    } else {
+      // pending — enter game screen with pending UI, listen for accept
+      enterGame(false, 'pending', r.username||r.displayName);
+      listenReq(false);
+    }
   } else {
     showUname();
   }
@@ -303,7 +312,7 @@ function showUname(){
 window.sendRequest = async () => {
   const uname = document.getElementById('uname-inp').value.trim();
   if(!uname){ document.getElementById('uname-err').textContent='Name danna!'; return; }
-  if(uname.length<2){ document.getElementById('uname-err').textContent='Tika diga kරන්න'; return; }
+  if(uname.length<2){ document.getElementById('uname-err').textContent='Tika diga karanna'; return; }
   const mSnap = await get(ref(db,'members'));
   const taken = Object.values(mSnap.val()||{}).some(m=>m.username?.toLowerCase()===uname.toLowerCase());
   if(taken){ document.getElementById('uname-err').textContent='Me name eka use wenawa! Wenas ekak denna.'; return; }
@@ -311,37 +320,69 @@ window.sendRequest = async () => {
     uid:me.uid, username:uname, displayName:me.displayName||uname,
     email:me.email, photoURL:me.photoURL||'', status:'pending', requestedAt:serverTimestamp()
   });
-  showWait('pending'); listenReq();
+  // Go straight to game screen with pending state — no more waiting screen
+  enterGame(false, 'pending', uname);
+  listenReq(true); // true = first time, send welcome msg on accept
 };
 
-function showWait(status){
-  showScreen('s-waiting');
-  document.getElementById('w-icon').textContent = status==='rejected'?'😔':'⏳';
-  document.getElementById('w-title').textContent = status==='rejected'?'Request Rejected':'Request Sent!';
-  document.getElementById('w-desc').textContent = status==='rejected'?'Admin oba reject karanawa.':'Admin approve karanamath inna...';
-  document.getElementById('w-spin').style.display = status==='rejected'?'none':'block';
-  document.getElementById('w-chip').innerHTML = status==='rejected'?
-    '<span class="rejected-chip">✕ Rejected</span>':'<span class="pending-chip">⏳ Pending</span>';
-}
-
-function listenReq(){
+function listenReq(sendWelcome=false){
   if(reqUnsub){ reqUnsub(); reqUnsub=null; }
   reqUnsub = onValue(ref(db,`requests/${me.uid}`), async snap=>{
     const d=snap.val(); if(!d) return;
     if(d.status==='accepted'){
       const mSnap=await get(ref(db,`members/${me.uid}`));
-      if(mSnap.exists()){ myData=mSnap.val(); if(reqUnsub){reqUnsub();reqUnsub=null;} enterGame(); }
-    } else if(d.status==='rejected'){ showWait('rejected'); }
+      if(mSnap.exists()){
+        myData=mSnap.val();
+        if(reqUnsub){reqUnsub();reqUnsub=null;}
+        // Send welcome notification message from system
+        await push(ref(db,'messages'),{
+          role:'system',
+          senderName:'Seettuwa',
+          to: me.uid,
+          text: `✅ Hi ${myData.username}! Admin oba accept karanawa. Oba දැන් group eke member kෙනෙක්. Game ekata join wenawa! 🎴`,
+          ts: Date.now()
+        });
+        enterGame(true); // true = just accepted, show toast
+      }
+    } else if(d.status==='rejected'){
+      enterGame(false, 'rejected');
+    }
   });
 }
 
-function enterGame(){
+function enterGame(justAccepted=false, pendingState=null, pendingName=''){
   showScreen('s-game');
-  // pill
-  const pill = document.getElementById('game-pill');
-  const uname = myData?.username||me.displayName||'?';
+  const uname = myData?.username || pendingName || me.displayName||'?';
   const photo = me.photoURL;
-  pill.innerHTML=`${photo?`<img class="up-av" src="${esc(photo)}">`:`<div class="up-av-init">${uname[0].toUpperCase()}</div>`}<span>${esc(uname)}</span>`;
+  document.getElementById('game-pill').innerHTML=`${photo?`<img class="up-av" src="${esc(photo)}">`:`<div class="up-av-init">${uname[0].toUpperCase()}</div>`}<span>${esc(uname)}</span>`;
+
+  if(pendingState==='pending'){
+    // Show pending UI inside game screen
+    document.getElementById('game-left').innerHTML=`
+      <div class="pending-panel">
+        <div class="pp-icon">📨</div>
+        <h2>Request Sent!</h2>
+        <p>Admin oba approve karanamath inna. Oba accept karaata passe automatically game ekata join wenawa.</p>
+        <span class="pp-chip">⏳ Pending Approval</span>
+        <div class="pp-chat-hint">💬 Chat box eken admin kata message karanna puluwan — screen eke pahala!</div>
+      </div>`;
+    // Setup chat only (no game listeners yet)
+    setupPresenceOnly();
+    msgUnsub = onValue(query(ref(db,'messages'),orderByChild('ts'),limitToLast(100)), s=>renderChat(s.val()||{}, true));
+    return;
+  }
+
+  if(pendingState==='rejected'){
+    document.getElementById('game-left').innerHTML=`
+      <div class="rejected-panel">
+        <div class="rp-icon">😔</div>
+        <h2>Request Rejected</h2>
+        <p>Admin oba reject karanawa. Wenas Gmail account ekakin try karanna puluwan.</p>
+      </div>`;
+    return;
+  }
+
+  if(justAccepted) toast('🎉 Admin oba accept karanawa! Welcome!','success');
   setupPresence();
   setupListeners();
 }
@@ -351,6 +392,11 @@ function setupPresence(){
   const tick=()=>set(ref(db,`online/${me.uid}`),Date.now());
   tick(); presInt=setInterval(tick,6000);
   window.addEventListener('beforeunload',clearPresence);
+}
+function setupPresenceOnly(){
+  clearPresence();
+  // light presence for pending users
+  presInt=setInterval(()=>{}, 9999); // placeholder so clearPresence works
 }
 function clearPresence(){
   if(presInt) clearInterval(presInt);
