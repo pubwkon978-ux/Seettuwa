@@ -61,11 +61,21 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 .up-av{width:24px;height:24px;border-radius:50%;object-fit:cover;}
 .up-av-init{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;}
 
-/* main game layout: left=game area, right=chat+members */
-.game-layout{flex:1;display:grid;grid-template-columns:1fr 280px;overflow:hidden;}
-@media(max-width:700px){.game-layout{grid-template-columns:1fr;}}
+/* main game layout */
+.game-layout{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.game-left{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem;padding-bottom:200px;}
 
-.game-left{overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.2rem;}
+/* CHAT — fixed bottom panel */
+.chat-bottom{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:2px solid var(--border2);z-index:100;display:flex;flex-direction:column;max-height:280px;}
+.chat-tab-bar{display:flex;align-items:center;justify-content:space-between;padding:.5rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+.chat-tab-bar h3{font-size:.78rem;font-weight:800;display:flex;align-items:center;gap:6px;}
+.chat-tab-bar .toggle-arrow{font-size:.7rem;color:var(--muted);transition:transform .2s;}
+.chat-tab-bar .toggle-arrow.open{transform:rotate(180deg);}
+.chat-body{display:flex;flex-direction:column;overflow:hidden;transition:max-height .3s ease;}
+.chat-body.collapsed{max-height:0;overflow:hidden;}
+.chat-messages{flex:1;overflow-y:auto;padding:.7rem 1rem;display:flex;flex-direction:column;gap:6px;max-height:160px;}
+.chat-messages::-webkit-scrollbar{width:4px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* members strip */
 .members-panel{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem;}
@@ -129,15 +139,7 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 .lr-status.flipped{background:var(--accent3);box-shadow:0 0 4px var(--accent3);}
 .lr-status.picked{background:var(--accent);}
 
-/* RIGHT: chat */
-.game-right{background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-.chat-header{padding:.9rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0;}
-.chat-header h3{font-size:.8rem;font-weight:800;}
-.chat-notif{font-size:.65rem;color:var(--accent3);margin-top:2px;min-height:14px;}
-.chat-messages{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:7px;}
-.chat-messages::-webkit-scrollbar{width:4px;}
-.chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-.msg-bubble{max-width:92%;padding:.5rem .75rem;border-radius:12px;font-size:.78rem;line-height:1.5;}
+.msg-bubble{max-width:80%;padding:.45rem .7rem;border-radius:12px;font-size:.78rem;line-height:1.5;}
 .msg-from-admin{background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);border-bottom-left-radius:3px;align-self:flex-start;}
 .msg-from-me{background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2);border-bottom-right-radius:3px;align-self:flex-end;text-align:right;}
 .msg-from-other{background:var(--s2);border:1px solid var(--border);border-bottom-left-radius:3px;align-self:flex-start;}
@@ -145,12 +147,13 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 .msg-meta{font-size:.58rem;color:var(--muted);margin-bottom:2px;}
 .msg-text{color:var(--text);}
 .msg-private-tag{font-size:.58rem;color:var(--accent3);margin-top:2px;}
-.chat-inp-row{padding:.7rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:6px;}
-.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;outline:none;resize:none;min-height:36px;max-height:80px;transition:border-color .2s;}
+.chat-inp-row{padding:.5rem .8rem .6rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:6px;}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:7px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:.82rem;outline:none;resize:none;min-height:34px;max-height:60px;transition:border-color .2s;}
 .chat-inp:focus{border-color:var(--accent);}
-.send-btn{background:var(--accent);border:none;border-radius:10px;padding:8px 12px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;}
+.send-btn{background:var(--accent);border:none;border-radius:10px;padding:7px 13px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;align-self:flex-end;}
 .send-btn:hover{opacity:.85;}
 .new-msg-badge{display:inline-flex;align-items:center;justify-content:center;background:var(--accent3);color:#fff;border-radius:50%;width:16px;height:16px;font-size:.6rem;font-weight:800;margin-left:4px;vertical-align:middle;}
+.chat-notif{font-size:.65rem;color:var(--accent3);}
 
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:.8rem 1.2rem;font-size:.82rem;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -206,19 +209,23 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
     </div>
   </div>
   <div class="game-layout">
-    <!-- LEFT -->
     <div class="game-left" id="game-left">
       <div class="wait-box"><div class="wi">⏳</div><h2>Loading...</h2></div>
     </div>
-    <!-- RIGHT: chat -->
-    <div class="game-right">
-      <div class="chat-header">
-        <h3>💬 Chat <span id="chat-badge" style="display:none" class="new-msg-badge">!</span></h3>
-        <div class="chat-notif" id="chat-notif"></div>
-      </div>
+  </div>
+
+  <!-- BOTTOM CHAT BAR — always visible -->
+  <div class="chat-bottom" id="chat-bottom" style="display:none;">
+    <div class="chat-tab-bar" onclick="toggleChat()">
+      <h3>💬 Chat Admin <span id="chat-badge" style="display:none" class="new-msg-badge">!</span>
+        <span id="chat-notif" class="chat-notif"></span>
+      </h3>
+      <span class="toggle-arrow open" id="chat-arrow">▲</span>
+    </div>
+    <div class="chat-body" id="chat-body">
       <div class="chat-messages" id="chat-messages"></div>
       <div class="chat-inp-row">
-        <textarea class="chat-inp" id="chat-inp" placeholder="Admin kata message..." rows="1"></textarea>
+        <textarea class="chat-inp" id="chat-inp" placeholder="Admin kata message type karanna..." rows="1"></textarea>
         <button class="send-btn" onclick="sendMsg()">➤</button>
       </div>
     </div>
@@ -253,7 +260,6 @@ let myData = null;
 let presInt = null;
 let reqUnsub = null, gameUnsub = null, memberUnsub = null, onlineUnsub = null, msgUnsub = null;
 let membersCache = {};
-let chatVisible = true;
 let lastMsgCount = 0;
 
 window.signInGoogle = async () => {
@@ -539,7 +545,20 @@ window.flipCard = async () => {
   await update(ref(db,'game/flipped'),{[me.uid]:true});
 };
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+let chatOpen = true;
+window.toggleChat = () => {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-body').classList.toggle('collapsed', !chatOpen);
+  document.getElementById('chat-arrow').classList.toggle('open', chatOpen);
+};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  // show chat bar only in game screen
+  const cb = document.getElementById('chat-bottom');
+  if(cb) cb.style.display = id==='s-game' ? 'flex' : 'none';
+}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type||''}`;setTimeout(()=>t.className='toast',2500);}
 window.toast=toast;
