@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Seettuwa</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;--s1:#0f1120;--s2:#171830;--s3:#1e2040;
+  --border:#2a2d50;--border2:#3a3f70;
+  --accent:#6c63ff;--accent2:#00e5cc;--accent3:#ff6b9d;
+  --warn:#ffbe0b;--danger:#ff4757;--success:#2ed573;
+  --text:#e8eaf6;--muted:#7b80a8;--faint:#3a3f60;
+}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+
+/* ── AUTH OVERLAY ── */
+#auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;}
+.auth-card{background:var(--s1);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:420px;text-align:center;}
+.auth-card .brand{font-size:2.5rem;margin-bottom:.5rem;}
+.auth-card h1{font-size:1.5rem;font-weight:800;margin-bottom:.3rem;}
+.auth-card p{color:var(--muted);font-size:.85rem;margin-bottom:2rem;line-height:1.6;}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;}
+.google-btn:hover{border-color:var(--accent);background:var(--s3);}
+.google-btn svg{width:22px;height:22px;flex-shrink:0;}
+.auth-note{margin-top:1rem;font-size:.75rem;color:var(--muted);}
+#auth-error{color:var(--danger);font-size:.8rem;margin-top:.8rem;min-height:18px;}
+
+/* ── LAYOUT ── */
+#app{display:none;min-height:100vh;flex-direction:column;}
+#app.ready{display:flex;}
+header{background:var(--s1);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);letter-spacing:-0.5px;}
+header .hright{display:flex;align-items:center;gap:10px;}
+.admin-chip{background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.4);color:var(--accent);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:700;}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.8rem;}
+.avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;}
+.avatar-init{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
+.btn-sm{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.btn-sm:hover{color:var(--danger);border-color:var(--danger);}
+
+.main{display:grid;grid-template-columns:300px 1fr;flex:1;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-section{padding:1.2rem 1.2rem .8rem;border-bottom:1px solid var(--border);}
+.sb-label{font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.8rem;display:block;}
+.stat-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.8rem;}
+.stat-mini-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.6rem .8rem;}
+.stat-mini-card .sv{font-size:1.4rem;font-weight:800;font-family:'DM Mono',monospace;}
+.stat-mini-card .sl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.sv.c-accent{color:var(--accent);}
+.sv.c-a2{color:var(--accent2);}
+.sv.c-success{color:var(--success);}
+.sv.c-warn{color:var(--warn);}
+
+.action-btn{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.action-btn:hover{border-color:var(--accent);background:var(--s3);}
+.action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.action-btn.primary:hover{opacity:.85;}
+.action-btn.danger{border-color:rgba(255,71,87,.4);color:var(--danger);}
+.action-btn.danger:hover{background:rgba(255,71,87,.1);}
+.action-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* requests list */
+.req-list{display:flex;flex-direction:column;gap:6px;}
+.req-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.7rem .9rem;display:flex;align-items:center;gap:8px;}
+.req-item .ri-name{flex:1;font-size:.85rem;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.req-item .ri-email{font-size:.65rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;}
+.req-item .ri-actions{display:flex;gap:5px;flex-shrink:0;}
+.ib{border:none;border-radius:7px;padding:4px 8px;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.ib.accept{background:rgba(46,213,115,.15);color:var(--success);border:1px solid rgba(46,213,115,.3);}
+.ib.accept:hover{background:rgba(46,213,115,.25);}
+.ib.reject{background:rgba(255,71,87,.1);color:var(--danger);border:1px solid rgba(255,71,87,.25);}
+.ib.reject:hover{background:rgba(255,71,87,.2);}
+.empty-note{color:var(--muted);font-size:.78rem;text-align:center;padding:.8rem;background:var(--s2);border-radius:8px;border:1px dashed var(--border);}
+
+/* ── CONTENT ── */
+.content{overflow-y:auto;padding:1.5rem;}
+.section-title{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:1rem;}
+
+/* members table */
+.members-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:1.5rem;}
+.member-row{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:.7rem 1rem;display:flex;align-items:center;gap:10px;transition:border-color .2s;}
+.member-row:hover{border-color:var(--border2);}
+.member-row .mr-idx{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--faint);width:20px;text-align:right;flex-shrink:0;}
+.member-row .mr-av{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.member-row .mr-av-init{width:30px;height:30px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--accent);flex-shrink:0;}
+.member-row .mr-info{flex:1;min-width:0;}
+.member-row .mr-name{font-size:.88rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.member-row .mr-email{font-size:.65rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:3px 9px;font-size:.65rem;font-weight:700;}
+.badge.online{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:var(--success);}
+.badge.offline{background:var(--s2);border:1px solid var(--border);color:var(--muted);}
+.badge.num{background:rgba(0,229,204,.1);border:1px solid rgba(0,229,204,.3);color:var(--accent2);font-family:'DM Mono',monospace;font-size:.75rem;}
+.badge.flipped{background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);color:var(--accent3);}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot.on{background:var(--success);box-shadow:0 0 5px var(--success);}
+.dot.off{background:var(--faint);}
+.mr-num{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--accent2);width:32px;text-align:center;flex-shrink:0;}
+.kick-btn{background:none;border:none;color:var(--faint);cursor:pointer;font-size:.85rem;padding:2px 4px;transition:color .2s;flex-shrink:0;}
+.kick-btn:hover{color:var(--danger);}
+
+/* cards section */
+.cards-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.cards-grid-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;}
+.ca-card{aspect-ratio:2/3;background:var(--s1);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;transition:all .2s;}
+.ca-card.assigned{border-color:rgba(108,99,255,.5);background:rgba(108,99,255,.06);}
+.ca-card.flipped{border-color:rgba(255,107,157,.5);background:rgba(255,107,157,.06);}
+.ca-card .cn{font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--accent2);}
+.ca-card .co{font-size:.55rem;color:var(--muted);text-align:center;padding:0 4px;line-height:1.3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ca-card .cind{position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--border);}
+.ca-card.assigned .cind{background:var(--accent);}
+.ca-card.flipped .cind{background:var(--accent3);box-shadow:0 0 5px var(--accent3);}
+
+/* game state banner */
+.state-banner{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;}
+.state-banner .sb-icon{font-size:1.5rem;}
+.state-banner .sb-text h3{font-size:.88rem;font-weight:700;margin-bottom:2px;}
+.state-banner .sb-text p{font-size:.75rem;color:var(--muted);}
+.state-banner.active-game{border-color:rgba(46,213,115,.3);background:rgba(46,213,115,.05);}
+.state-banner.waiting{border-color:rgba(255,190,11,.3);background:rgba(255,190,11,.04);}
+
+/* toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:.8rem 1.2rem;font-size:.82rem;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,213,115,.4);color:var(--success);}
+.toast.error{border-color:rgba(255,71,87,.4);color:var(--danger);}
+
+/* game phase controls */
+.phase-strip{display:flex;align-items:center;gap:6px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.phase-pill{border-radius:20px;padding:5px 14px;font-size:.72rem;font-weight:700;border:1px solid var(--border);color:var(--muted);background:var(--s2);}
+.phase-pill.done{border-color:rgba(46,213,115,.4);color:var(--success);background:rgba(46,213,115,.08);}
+.phase-pill.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.1);}
+.phase-arrow{color:var(--faint);font-size:.8rem;}
+
+/* results live */
+.results-list{display:flex;flex-direction:column;gap:5px;}
+.result-row{display:flex;align-items:center;gap:10px;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:.6rem .9rem;font-size:.82rem;}
+.result-row .rn{font-family:'DM Mono',monospace;color:var(--accent2);width:28px;text-align:center;font-size:.9rem;flex-shrink:0;}
+.result-row .rname{flex:1;font-weight:700;}
+.result-row .rstatus{font-size:.68rem;padding:2px 8px;border-radius:6px;border:1px solid var(--border);color:var(--muted);}
+.result-row .rstatus.flipped{color:var(--accent3);border-color:rgba(255,107,157,.35);background:rgba(255,107,157,.06);}
+.result-row .rstatus.waiting{color:var(--accent);border-color:rgba(108,99,255,.35);background:rgba(108,99,255,.06);}
+
+@media(max-width:700px){.main{grid-template-columns:1fr;}.sidebar{border-right:none;border-bottom:1px solid var(--border);}}
+</style>
+</head>
+<body>
+
+<!-- AUTH OVERLAY -->
+<div id="auth-overlay">
+  <div class="auth-card">
+    <div class="brand">🎴</div>
+    <h1>Seettuwa Admin</h1>
+    <p>Admin panel ekkata access karanna<br>Google account eken login wenna.</p>
+    <button class="google-btn" onclick="signInGoogle()">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l5.9-5.9C34.5 3.3 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l6.9 5.4C12.3 13.8 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-16.9z"/><path fill="#FBBC05" d="M10.6 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-6.9-5.4A23.9 23.9 0 0 0 .5 24c0 3.9.9 7.5 2.6 10.7l7.5-6.1z"/><path fill="#34A853" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.9 2-6.3 0-11.6-4.2-13.5-9.9l-7.5 6.1C7 41.3 14.9 47 24 47z"/></svg>
+      Google eken Login වන්න
+    </button>
+    <div id="auth-error"></div>
+    <p class="auth-note">⚠️ Admin access සඳහා pre-approved email ඕනි</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <header>
+    <div class="logo">🎴 Seettuwa</div>
+    <div class="hright">
+      <span class="admin-chip">⚡ ADMIN</span>
+      <div class="user-pill">
+        <img id="admin-avatar" class="avatar" src="" style="display:none">
+        <div id="admin-init" class="avatar-init" style="display:none"></div>
+        <span id="admin-name">—</span>
+      </div>
+      <button class="btn-sm" onclick="signOut()">Logout</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-section">
+        <span class="sb-label">Live Stats</span>
+        <div class="stat-mini">
+          <div class="stat-mini-card"><div class="sv c-accent" id="st-members">0</div><div class="sl">Members</div></div>
+          <div class="stat-mini-card"><div class="sv c-warn" id="st-online">0</div><div class="sl">Online</div></div>
+          <div class="stat-mini-card"><div class="sv c-a2" id="st-picked">0</div><div class="sl">Picked</div></div>
+          <div class="stat-mini-card"><div class="sv c-success" id="st-flipped">0</div><div class="sl">Revealed</div></div>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <span class="sb-label">Game Control</span>
+        <button class="action-btn primary" id="btn-shuffle" onclick="doShuffle()" disabled>🔀 Set Cards & Shuffle</button>
+        <button class="action-btn" id="btn-reset-flips" onclick="resetFlips()">↩️ Reset Card Flips</button>
+        <button class="action-btn danger" onclick="resetAll()">🗑️ Reset Everything</button>
+      </div>
+
+      <div class="sb-section" style="flex:1;">
+        <span class="sb-label">Join Requests (<span id="req-count">0</span>)</span>
+        <div class="req-list" id="req-list">
+          <div class="empty-note">No pending requests</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- Phase strip -->
+      <div class="phase-strip">
+        <span class="phase-pill" id="ph1">1. Members Join</span>
+        <span class="phase-arrow">›</span>
+        <span class="phase-pill" id="ph2">2. Set Cards</span>
+        <span class="phase-arrow">›</span>
+        <span class="phase-pill" id="ph3">3. Pick & Reveal</span>
+      </div>
+
+      <!-- State banner -->
+      <div class="state-banner waiting" id="state-banner">
+        <span class="sb-icon">⏳</span>
+        <div class="sb-text">
+          <h3>Waiting for Members</h3>
+          <p>Members join වෙනකම් ඉන්න. ඔක්කොම online වුණාම "Set Cards" click කරන්න.</p>
+        </div>
+      </div>
+
+      <!-- Members -->
+      <div class="section-title">Accepted Members</div>
+      <div class="members-grid" id="members-grid">
+        <div class="empty-note">No members yet — requests approve කරන්න</div>
+      </div>
+
+      <!-- Cards -->
+      <div class="cards-header">
+        <div class="section-title" style="margin-bottom:0">Cards Overview</div>
+      </div>
+      <div class="cards-grid-admin" id="cards-grid"></div>
+
+      <!-- Results -->
+      <div style="margin-top:1.5rem;">
+        <div class="section-title">Live Results</div>
+        <div class="results-list" id="results-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut as fbSignOut }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, set, get, onValue, update, remove, push, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC15xoj_yTycj6JKQmNamP_RdHAkRTBKJU",
+  authDomain: "seettuwa-8e728.firebaseapp.com",
+  databaseURL: "https://seettuwa-8e728-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "seettuwa-8e728",
+  storageBucket: "seettuwa-8e728.firebasestorage.app",
+  messagingSenderId: "602443508284",
+  appId: "1:602443508284:web:43ef7f44080b866525b139"
+};
+
+const ADMIN_EMAILS = ["pubwkon978@gmail.com"];
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+let currentAdmin = null;
+let membersUnsub = null;
+let requestsUnsub = null;
+let gameUnsub = null;
+let onlineUnsub = null;
+let presenceInterval = null;
+
+// ── AUTH ──
+window.signInGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const email = result.user.email;
+    if (!ADMIN_EMAILS.includes(email)) {
+      await fbSignOut(auth);
+      document.getElementById('auth-error').textContent = '⛔ Admin access denied for: ' + email;
+      return;
+    }
+  } catch(e) {
+    document.getElementById('auth-error').textContent = e.message;
+  }
+};
+
+window.signOut = async () => {
+  await fbSignOut(auth);
+};
+
+onAuthStateChanged(auth, user => {
+  if (user && ADMIN_EMAILS.includes(user.email)) {
+    currentAdmin = user;
+    document.getElementById('auth-overlay').style.display = 'none';
+    document.getElementById('app').classList.add('ready');
+    const aname = user.displayName || user.email;
+    document.getElementById('admin-name').textContent = aname.split(' ')[0];
+    if (user.photoURL) {
+      document.getElementById('admin-avatar').src = user.photoURL;
+      document.getElementById('admin-avatar').style.display = 'block';
+    } else {
+      const init = document.getElementById('admin-init');
+      init.textContent = aname[0].toUpperCase();
+      init.style.display = 'flex';
+    }
+    startListeners();
+  } else {
+    currentAdmin = null;
+    document.getElementById('auth-overlay').style.display = 'flex';
+    document.getElementById('app').classList.remove('ready');
+    stopListeners();
+  }
+});
+
+// ── LISTENERS ──
+function startListeners() {
+  // Requests
+  requestsUnsub = onValue(ref(db, 'requests'), snap => {
+    const data = snap.val() || {};
+    renderRequests(data);
+  });
+
+  // Members
+  membersUnsub = onValue(ref(db, 'members'), snap => {
+    renderAll();
+  });
+
+  // Game state
+  gameUnsub = onValue(ref(db, 'game'), snap => {
+    renderAll();
+  });
+
+  // Online presence
+  onlineUnsub = onValue(ref(db, 'online'), snap => {
+    renderAll();
+  });
+}
+
+function stopListeners() {
+  if (requestsUnsub) requestsUnsub();
+  if (membersUnsub) membersUnsub();
+  if (gameUnsub) gameUnsub();
+  if (onlineUnsub) onlineUnsub();
+}
+
+// ── REQUESTS ──
+function renderRequests(data) {
+  const list = document.getElementById('req-list');
+  const count = document.getElementById('req-count');
+  const entries = Object.entries(data).filter(([,v]) => v.status === 'pending');
+  count.textContent = entries.length;
+  if (entries.length === 0) {
+    list.innerHTML = '<div class="empty-note">No pending requests</div>';
+    return;
+  }
+  list.innerHTML = entries.map(([uid, v]) => `
+    <div class="req-item">
+      <div style="flex:1;min-width:0;">
+        <div class="ri-name">${esc(v.displayName)}</div>
+        <div class="ri-email">${esc(v.email)}</div>
+      </div>
+      <div class="ri-actions">
+        <button class="ib accept" onclick="acceptRequest('${uid}')">✓</button>
+        <button class="ib reject" onclick="rejectRequest('${uid}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.acceptRequest = async (uid) => {
+  const snap = await get(ref(db, `requests/${uid}`));
+  const data = snap.val();
+  if (!data) return;
+  await set(ref(db, `members/${uid}`), {
+    displayName: data.displayName,
+    username: data.username,
+    email: data.email,
+    photoURL: data.photoURL || '',
+    joinedAt: serverTimestamp()
+  });
+  await update(ref(db, `requests/${uid}`), { status: 'accepted' });
+  toast(`✓ ${data.displayName} added!`, 'success');
+};
+
+window.rejectRequest = async (uid) => {
+  await update(ref(db, `requests/${uid}`), { status: 'rejected' });
+  toast('Request rejected', '');
+};
+
+// ── RENDER ALL ──
+async function renderAll() {
+  const [membersSnap, gameSnap, onlineSnap] = await Promise.all([
+    get(ref(db, 'members')),
+    get(ref(db, 'game')),
+    get(ref(db, 'online'))
+  ]);
+  const members = membersSnap.val() || {};
+  const game = gameSnap.val() || {};
+  const online = onlineSnap.val() || {};
+  const now = Date.now();
+
+  const memberEntries = Object.entries(members);
+  const isShuffled = game.shuffled || false;
+  const assignments = game.assignments || {};
+  const flipped = game.flipped || {};
+  const shuffledOrder = game.shuffledOrder || [];
+
+  // online count
+  const onlineUids = Object.entries(online).filter(([,t]) => (now - t) < 12000).map(([u]) => u);
+  const onlineCount = onlineUids.length;
+  const flippedCount = Object.keys(flipped).length;
+  const pickedCount = Object.keys(assignments).length;
+
+  document.getElementById('st-members').textContent = memberEntries.length;
+  document.getElementById('st-online').textContent = onlineCount;
+  document.getElementById('st-picked').textContent = pickedCount;
+  document.getElementById('st-flipped').textContent = flippedCount;
+
+  // shuffle button
+  const shuffleBtn = document.getElementById('btn-shuffle');
+  shuffleBtn.disabled = memberEntries.length === 0 || isShuffled;
+  if (isShuffled) shuffleBtn.textContent = '✓ Cards Set';
+
+  // phase pills
+  document.getElementById('ph1').className = 'phase-pill ' + (memberEntries.length > 0 ? 'done' : 'active');
+  document.getElementById('ph2').className = 'phase-pill ' + (isShuffled ? 'done' : memberEntries.length > 0 ? 'active' : '');
+  document.getElementById('ph3').className = 'phase-pill ' + (flippedCount > 0 ? 'active' : '');
+
+  // state banner
+  const banner = document.getElementById('state-banner');
+  if (!isShuffled) {
+    banner.className = 'state-banner waiting';
+    banner.innerHTML = `<span class="sb-icon">⏳</span><div class="sb-text"><h3>Waiting for Members</h3><p>${memberEntries.length} member(s) joined. Online: ${onlineCount}. Ready වුණාම shuffle කරන්න.</p></div>`;
+  } else {
+    banner.className = 'state-banner active-game';
+    banner.innerHTML = `<span class="sb-icon">🎮</span><div class="sb-text"><h3>Game Active!</h3><p>${pickedCount}/${memberEntries.length} picked · ${flippedCount} revealed</p></div>`;
+  }
+
+  // members grid
+  const mg = document.getElementById('members-grid');
+  if (memberEntries.length === 0) {
+    mg.innerHTML = '<div class="empty-note">No members yet — requests approve කරන්න</div>';
+  } else {
+    mg.innerHTML = memberEntries.map(([uid, m], i) => {
+      const isOnline = onlineUids.includes(uid);
+      const num = assignments[uid];
+      const isFlipped = flipped[uid];
+      const initials = (m.displayName||m.username||'?')[0].toUpperCase();
+      return `<div class="member-row">
+        <span class="mr-idx">${i+1}</span>
+        ${m.photoURL ? `<img class="mr-av" src="${esc(m.photoURL)}">` : `<div class="mr-av-init">${initials}</div>`}
+        <div class="mr-info">
+          <div class="mr-name">${esc(m.username || m.displayName)}</div>
+          <div class="mr-email">${esc(m.email)}</div>
+        </div>
+        <span class="badge ${isOnline ? 'online' : 'offline'}"><span class="dot ${isOnline ? 'on' : 'off'}"></span>${isOnline ? 'Online' : 'Offline'}</span>
+        ${num !== undefined ? `<span class="badge num">${num}</span>` : ''}
+        ${isFlipped ? `<span class="badge flipped">✓ Seen</span>` : ''}
+        <button class="kick-btn" onclick="kickMember('${uid}','${esc(m.username||m.displayName)}')">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  // cards grid
+  const cg = document.getElementById('cards-grid');
+  const numToUid = {};
+  Object.entries(assignments).forEach(([uid, num]) => numToUid[num] = uid);
+  cg.innerHTML = Array.from({length:20},(_,i) => {
+    const num = i+1;
+    const uid = numToUid[num];
+    const owner = uid ? (members[uid]?.username || members[uid]?.displayName || '?') : null;
+    const isFlipped = uid && flipped[uid];
+    return `<div class="ca-card ${isFlipped?'flipped':uid?'assigned':''}">
+      <div class="cind"></div>
+      <div class="cn">${num}</div>
+      ${owner ? `<div class="co">${esc(owner)}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // results list
+  const rl = document.getElementById('results-list');
+  if (memberEntries.length === 0) { rl.innerHTML = ''; return; }
+  rl.innerHTML = memberEntries.map(([uid, m]) => {
+    const num = assignments[uid];
+    const isFlipped = flipped[uid];
+    return `<div class="result-row">
+      <div class="rn">${num !== undefined ? num : '—'}</div>
+      <div class="rname">${esc(m.username || m.displayName)}</div>
+      <div class="rstatus ${isFlipped ? 'flipped' : num!==undefined ? 'waiting' : ''}">${isFlipped ? '✓ Revealed' : num!==undefined ? 'Picked' : 'No card'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── GAME ACTIONS ──
+window.doShuffle = async () => {
+  const snap = await get(ref(db, 'members'));
+  const members = snap.val() || {};
+  const uids = Object.keys(members);
+  if (uids.length === 0) { toast('Members nanne!','error'); return; }
+
+  const nums = Array.from({length:20},(_,i)=>i+1);
+  for (let i = nums.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [nums[i],nums[j]] = [nums[j],nums[i]];
+  }
+
+  await set(ref(db,'game'), {
+    shuffled: true,
+    shuffledOrder: nums,
+    assignments: {},
+    flipped: {},
+    startedAt: serverTimestamp()
+  });
+  toast('🔀 Cards shuffled!','success');
+};
+
+window.resetFlips = async () => {
+  if (!confirm('Card flips reset karanawada?')) return;
+  await update(ref(db,'game'), { flipped: {} });
+  toast('↩️ Flips reset','success');
+};
+
+window.resetAll = async () => {
+  if (!confirm('Everything reset karanawada? Members, cards, requests — hamoma delete wenawa!')) return;
+  await remove(ref(db,'game'));
+  await remove(ref(db,'members'));
+  await remove(ref(db,'requests'));
+  await remove(ref(db,'online'));
+  toast('♻️ Reset done','success');
+};
+
+window.kickMember = async (uid, name) => {
+  if (!confirm(`Remove ${name}?`)) return;
+  await remove(ref(db,`members/${uid}`));
+  await remove(ref(db,`requests/${uid}`));
+  toast(`${name} removed`,'');
+};
+
+// ── UTILS ──
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast show ${type||''}`;
+  setTimeout(()=>t.className='toast',2500);
+}
+
+window.toast = toast;
+</script>
+</body>
+</html>
