@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — Seettuwa</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -14,13 +14,13 @@
   --warn:#ffbe0b;--danger:#ff4757;--success:#2ed573;
   --text:#e8eaf6;--muted:#7b80a8;--faint:#3a3f60;
 }
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
 #auth-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;}
 .auth-card{background:var(--s1);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:420px;text-align:center;}
 .auth-card .brand{font-size:2.5rem;margin-bottom:.5rem;}
 .auth-card h1{font-size:1.5rem;font-weight:800;margin-bottom:.3rem;}
 .auth-card p{color:var(--muted);font-size:.85rem;margin-bottom:2rem;line-height:1.6;}
-.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;}
 .google-btn:hover{border-color:var(--accent);background:var(--s3);}
 .google-btn svg{width:22px;height:22px;flex-shrink:0;}
 #auth-error{color:#ff4757;font-size:.8rem;margin-top:.8rem;min-height:18px;}
@@ -32,7 +32,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .user-pill{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 6px;font-size:.8rem;}
 .avatar{width:26px;height:26px;border-radius:50%;object-fit:cover;}
 .avatar-init{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
-.btn-sm{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-family:'Syne',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.btn-sm{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s;}
 .btn-sm:hover{color:var(--danger);border-color:var(--danger);}
 .main{display:grid;grid-template-columns:300px 1fr 280px;flex:1;overflow:hidden;height:calc(100vh - 57px);}
 .sidebar{background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
@@ -43,7 +43,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .sv{font-size:1.4rem;font-weight:800;font-family:'DM Mono',monospace;}
 .sl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
 .sv.c-accent{color:var(--accent)}.sv.c-a2{color:var(--accent2)}.sv.c-success{color:var(--success)}.sv.c-warn{color:var(--warn)}
-.action-btn{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.action-btn{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:700;color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;margin-bottom:6px;}
 .action-btn:hover{border-color:var(--accent);background:var(--s3);}
 .action-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
 .action-btn.primary:hover{opacity:.85;}
@@ -60,7 +60,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .ri-name{flex:1;font-size:.85rem;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ri-email{font-size:.65rem;color:var(--muted);}
 .ri-actions{display:flex;gap:5px;flex-shrink:0;}
-.ib{border:none;border-radius:7px;padding:4px 8px;font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.ib{border:none;border-radius:7px;padding:4px 8px;font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .2s;}
 .ib.accept{background:rgba(46,213,115,.15);color:var(--success);border:1px solid rgba(46,213,115,.3);}
 .ib.accept:hover{background:rgba(46,213,115,.25);}
 .ib.reject{background:rgba(255,71,87,.1);color:var(--danger);border:1px solid rgba(255,71,87,.25);}
@@ -68,7 +68,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .empty-note{color:var(--muted);font-size:.78rem;text-align:center;padding:.8rem;background:var(--s2);border-radius:8px;border:1px dashed var(--border);}
 /* content */
 .content{overflow-y:auto;padding:1.2rem;}
-.section-title{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.8rem;}
+.section-title{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:.8rem;font-weight:600;}
 .members-grid{display:flex;flex-direction:column;gap:5px;margin-bottom:1.2rem;}
 .member-row{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:.6rem .9rem;display:flex;align-items:center;gap:8px;transition:border-color .2s;}
 .member-row:hover{border-color:var(--border2);}
@@ -76,9 +76,9 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .mr-av{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 .mr-av-init{width:28px;height:28px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--accent);flex-shrink:0;}
 .mr-info{flex:1;min-width:0;}
-.mr-name{font-size:.85rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mr-name{font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .mr-email{font-size:.62rem;color:var(--muted);}
-.badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:700;}
+.badge{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 8px;font-size:.62rem;font-weight:600;}
 .badge.online{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:var(--success);}
 .badge.offline{background:var(--s2);border:1px solid var(--border);color:var(--muted);}
 .badge.num{background:rgba(0,229,204,.1);border:1px solid rgba(0,229,204,.3);color:var(--accent2);font-family:'DM Mono',monospace;}
@@ -88,7 +88,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .dot.off{background:var(--faint);}
 .kick-btn{background:none;border:none;color:var(--faint);cursor:pointer;font-size:.82rem;padding:2px 4px;transition:color .2s;flex-shrink:0;}
 .kick-btn:hover{color:var(--danger);}
-.msg-btn-sm{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);color:var(--accent);border-radius:7px;padding:3px 8px;font-size:.65rem;font-family:'Syne',sans-serif;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.msg-btn-sm{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);color:var(--accent);border-radius:7px;padding:3px 8px;font-size:.65rem;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;flex-shrink:0;}
 .msg-btn-sm:hover{background:rgba(108,99,255,.2);}
 .cards-grid-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:7px;margin-bottom:1.2rem;}
 .ca-card{aspect-ratio:2/3;background:var(--s1);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative;transition:all .2s;}
@@ -118,15 +118,15 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .rstatus.flipped{color:var(--accent3);border-color:rgba(255,107,157,.35);background:rgba(255,107,157,.06);}
 .rstatus.waiting{color:var(--accent);border-color:rgba(108,99,255,.35);background:rgba(108,99,255,.06);}
 /* CHAT PANEL */
-.chat-panel{background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.chat-panel{background:var(--s1);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 .chat-header{padding:.9rem 1rem .7rem;border-bottom:1px solid var(--border);flex-shrink:0;}
-.chat-header h3{font-size:.75rem;font-weight:800;color:var(--text);margin-bottom:.3rem;}
+.chat-header h3{font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:.3rem;}
 .chat-to-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .chat-to-label{font-size:.62rem;color:var(--muted);}
-.to-pill{border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:700;border:1px solid var(--border);color:var(--muted);background:var(--s2);cursor:pointer;transition:all .15s;}
+.to-pill{border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:600;border:1px solid var(--border);color:var(--muted);background:var(--s2);cursor:pointer;transition:all .15s;}
 .to-pill:hover{border-color:var(--accent);}
 .to-pill.selected{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.12);}
-.chat-messages{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:8px;}
+.chat-messages{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:8px;min-height:0;}
 .chat-messages::-webkit-scrollbar{width:4px;}
 .chat-messages::-webkit-scrollbar-track{background:transparent;}
 .chat-messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
@@ -137,7 +137,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .msg-meta{font-size:.6rem;color:var(--muted);margin-bottom:2px;}
 .msg-text{color:var(--text);}
 .chat-input-row{padding:.7rem;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:6px;}
-.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-family:'Syne',sans-serif;font-size:.8rem;outline:none;resize:none;transition:border-color .2s;min-height:36px;max-height:80px;}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 10px;color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;outline:none;resize:none;transition:border-color .2s;min-height:36px;max-height:80px;}
 .chat-inp:focus{border-color:var(--accent);}
 .send-btn{background:var(--accent);border:none;border-radius:10px;padding:8px 12px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;}
 .send-btn:hover{opacity:.85;}
@@ -153,10 +153,11 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
   <div class="auth-card">
     <div class="brand">🎴</div>
     <h1>Seettuwa Admin</h1>
-    <p>Admin panel ekkata access karanna<br>Google account eken login wenna.</p>
+    <p>Sign in with your Google account
+to access the admin panel.</p>
     <button class="google-btn" onclick="signInGoogle()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l5.9-5.9C34.5 3.3 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l6.9 5.4C12.3 13.8 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-16.9z"/><path fill="#FBBC05" d="M10.6 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-6.9-5.4A23.9 23.9 0 0 0 .5 24c0 3.9.9 7.5 2.6 10.7l7.5-6.1z"/><path fill="#34A853" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.9 2-6.3 0-11.6-4.2-13.5-9.9l-7.5 6.1C7 41.3 14.9 47 24 47z"/></svg>
-      Google eken Login වන්න
+      Sign in with Google
     </button>
     <div id="auth-error"></div>
   </div>
@@ -197,7 +198,8 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
         </div>
         <button class="action-btn primary" id="btn-shuffle" onclick="doShuffle()" disabled>🔀 Set Cards & Shuffle</button>
         <button class="action-btn" onclick="resetFlips()">↩️ Reset Card Flips</button>
-        <button class="action-btn danger" onclick="resetAll()">🗑️ Reset Everything</button>
+        <button class="action-btn danger" onclick="resetGame()">🗑️ Reset Game Only</button>
+        <button class="action-btn danger" onclick="resetMembers()">👥 Reset Members List</button>
       </div>
       <div class="sb-section" style="flex:1;overflow-y:auto;">
         <span class="sb-label">Join Requests (<span id="req-count">0</span>)</span>
@@ -377,15 +379,27 @@ async function renderAll() {
     banner.innerHTML=`<span class="sb-icon">🎮</span><div class="sb-text"><h3>Game Active — ${cardCount} cards</h3><p>${Object.keys(assignments).length}/${memberEntries.length} picked · ${Object.keys(flipped).length} revealed</p></div>`;
   }
 
-  // members grid
+  // members grid — sorted by pick order (who picked first = #1)
   const mg = document.getElementById('members-grid');
   if(!memberEntries.length){ mg.innerHTML='<div class="empty-note">No members yet</div>'; }
   else {
-    mg.innerHTML = memberEntries.map(([uid,m],i)=>{
+    // Build pick order: sort by assignment index in shuffledOrder
+    const shuffledOrder = game.shuffledOrder || [];
+    const pickOrder = {}; // uid → pick position (1-based)
+    if(isShuffled && Object.keys(assignments).length > 0) {
+      // Sort members who picked by the index of their number in shuffledOrder
+      const picked = Object.entries(assignments).map(([uid, num]) => ({
+        uid, num, idx: shuffledOrder.indexOf(num)
+      })).sort((a,b) => a.idx - b.idx);
+      picked.forEach((p, i) => pickOrder[p.uid] = i + 1);
+    }
+
+    mg.innerHTML = memberEntries.map(([uid,m], i)=>{
       const isOnline = onlineUids.includes(uid);
       const num = assignments[uid];
       const isFlipped = flipped[uid];
       const init = (m.username||m.displayName||'?')[0].toUpperCase();
+      const pickPos = pickOrder[uid];
       return `<div class="member-row">
         <span class="mr-idx">${i+1}</span>
         ${m.photoURL?`<img class="mr-av" src="${esc(m.photoURL)}">`:`<div class="mr-av-init">${init}</div>`}
@@ -407,10 +421,13 @@ async function renderAll() {
     return `<div class="to-pill ${isSelected?'selected':''}" data-to="${uid}" onclick="selectChatTo('${uid}',this)">${esc(name)}</div>`;
   }).join('');
 
-  // cards
+  // cards — auto arrange: show only cardCount cards, sized to fit
   const cg = document.getElementById('cards-grid');
   const numToUid = {};
   Object.entries(assignments).forEach(([uid,num])=>numToUid[num]=uid);
+  // auto column count based on card count
+  const cols = cardCount <= 10 ? 5 : cardCount <= 20 ? 5 : cardCount <= 30 ? 6 : 7;
+  cg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   cg.innerHTML = Array.from({length:cardCount},(_,i)=>{
     const num=i+1, uid=numToUid[num];
     const owner = uid?(members[uid]?.username||members[uid]?.displayName||'?'):null;
@@ -421,14 +438,25 @@ async function renderAll() {
     </div>`;
   }).join('');
 
-  // results
+  // results — sorted by pick order (1,2,3...)
   const rl = document.getElementById('results-list');
-  rl.innerHTML = memberEntries.map(([uid,m])=>{
+  // sort: picked first (by pick position), then unpicked
+  const sortedMembers = [...memberEntries].sort(([ua],[ub]) => {
+    const pa = assignments[ua] !== undefined ? (game.shuffledOrder||[]).indexOf(assignments[ua]) : 9999;
+    const pb = assignments[ub] !== undefined ? (game.shuffledOrder||[]).indexOf(assignments[ub]) : 9999;
+    return pa - pb;
+  });
+  let pickCounter = 0;
+  rl.innerHTML = sortedMembers.map(([uid,m])=>{
     const num=assignments[uid], isFlipped=flipped[uid];
-    return `<div class="result-row">
-      <div class="rn">${num!==undefined?num:'—'}</div>
+    const hasPicked = num !== undefined;
+    if(hasPicked) pickCounter++;
+    const pickNum = hasPicked ? pickCounter : null;
+    return `<div class="result-row ${isFlipped?'revealed':''}">
+      <div class="rn" style="color:${hasPicked?'var(--accent2)':'var(--faint)'}">${pickNum ? '#'+pickNum : '—'}</div>
       <div class="rname">${esc(m.username||m.displayName)}</div>
-      <div class="rstatus ${isFlipped?'flipped':num!==undefined?'waiting':''}">${isFlipped?'✓ Revealed':num!==undefined?'Picked':'No card'}</div>
+      ${hasPicked ? `<div style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent2);font-weight:500;margin-right:4px;">${num}</div>` : ''}
+      <div class="rstatus ${isFlipped?'flipped':hasPicked?'waiting':''}">${isFlipped?'✓ Revealed':hasPicked?'Picked':'Waiting'}</div>
     </div>`;
   }).join('');
 }
@@ -436,20 +464,21 @@ async function renderAll() {
 // chat
 function renderChat(data) {
   const box = document.getElementById('chat-messages');
+  const wasAtBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
   const msgs = Object.values(data).sort((a,b)=>(a.ts||0)-(b.ts||0));
-  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
   box.innerHTML = msgs.map(m => {
     const isAdmin = m.role==='admin';
     const isBroadcast = m.to==='all' && isAdmin;
     const isPrivate = m.to && m.to!=='all';
     const sender = isAdmin ? '⚡ Admin' : esc(m.senderName||'Member');
     const toLabel = isBroadcast ? '📢 All' : isPrivate ? `→ ${esc(membersCache[m.to]?.username||m.to)}` : '';
-    return `<div class="msg-bubble ${isAdmin?'from-admin':isBroadcast?'broadcast':'from-member'}">
-      <div class="msg-meta">${sender}${toLabel?' <span style="opacity:.6">('+toLabel+')</span>':''}</div>
+    return `<div class="msg-bubble ${isAdmin?'from-admin':'from-member'}">
+      <div class="msg-meta">${sender}${toLabel?` <span style="opacity:.6">(${toLabel})</span>`:''}</div>
       <div class="msg-text">${esc(m.text)}</div>
     </div>`;
   }).join('');
-  if(atBottom) box.scrollTop = box.scrollHeight;
+  // always scroll to bottom when new messages arrive
+  box.scrollTop = box.scrollHeight;
 }
 
 window.selectChatTo = (to, el) => {
@@ -492,11 +521,22 @@ window.doShuffle = async () => {
   await set(ref(db,'game'),{ shuffled:true, cardCount, shuffledOrder:nums, assignments:{}, flipped:{}, startedAt:serverTimestamp() });
   toast(`🔀 ${cardCount} cards shuffled!`,'success');
 };
-window.resetFlips = async () => { if(!confirm('Flips reset?')) return; await update(ref(db,'game'),{flipped:{}}); toast('↩️ Reset','success'); };
-window.resetAll = async () => {
-  if(!confirm('Everything reset? Members, cards, messages, requests hamoma delete wenawa!')) return;
-  await Promise.all([remove(ref(db,'game')),remove(ref(db,'members')),remove(ref(db,'requests')),remove(ref(db,'online')),remove(ref(db,'messages'))]);
-  toast('♻️ Done','success');
+window.resetFlips = async () => { if(!confirm('Reset card flips?')) return; await update(ref(db,'game'),{flipped:{}}); toast('↩️ Flips reset','success'); };
+window.resetGame = async () => {
+  if(!confirm('Reset game only? (cards, picks, flips reset — members stay logged in)')) return;
+  await Promise.all([remove(ref(db,'game')), remove(ref(db,'messages'))]);
+  toast('🗑️ Game reset — members still logged in','success');
+};
+window.resetMembers = async () => {
+  if(!confirm('Reset members list? This will log out all members and clear requests. Game data also cleared.')) return;
+  await Promise.all([
+    remove(ref(db,'game')),
+    remove(ref(db,'members')),
+    remove(ref(db,'requests')),
+    remove(ref(db,'online')),
+    remove(ref(db,'messages'))
+  ]);
+  toast('👥 Members list cleared','success');
 };
 window.kickMember = async (uid, name) => {
   if(!confirm(`Remove ${name}?`)) return;
