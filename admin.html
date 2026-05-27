@@ -141,6 +141,37 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
 .chat-inp:focus{border-color:var(--accent);}
 .send-btn{background:var(--accent);border:none;border-radius:10px;padding:8px 12px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;}
 .send-btn:hover{opacity:.85;}
+/* Members drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:150;opacity:0;pointer-events:none;transition:opacity .25s;}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:340px;max-width:95vw;background:var(--s1);border-left:1px solid var(--border);z-index:160;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.drawer.open{transform:translateX(0);}
+.drawer-header{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.drawer-header h3{font-size:.9rem;font-weight:700;}
+.drawer-close{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:2px 6px;border-radius:6px;transition:color .2s;}
+.drawer-close:hover{color:var(--text);}
+.drawer-list{flex:1;overflow-y:auto;padding:.8rem;}
+.drawer-member{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;margin-bottom:6px;display:flex;align-items:center;gap:10px;transition:border-color .2s;}
+.drawer-member:hover{border-color:var(--border2);}
+.dm-av{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.dm-av-init{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;}
+.dm-info{flex:1;min-width:0;}
+.dm-name{font-size:.85rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dm-email{font-size:.62rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dm-status{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.dm-msg-btn{background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);color:var(--accent);border-radius:8px;padding:4px 10px;font-size:.68rem;font-family:'Inter',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;}
+.dm-msg-btn:hover{background:rgba(108,99,255,.22);}
+.drawer-msg-box{border-top:1px solid var(--border);padding:.8rem;flex-shrink:0;}
+.drawer-msg-to{font-size:.65rem;color:var(--muted);margin-bottom:.4rem;min-height:16px;}
+.drawer-msg-to span{color:var(--accent);font-weight:600;}
+.drawer-msg-row{display:flex;gap:6px;}
+.drawer-inp{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:7px 10px;color:var(--text);font-family:'Inter',sans-serif;font-size:.8rem;outline:none;resize:none;min-height:34px;max-height:60px;transition:border-color .2s;}
+.drawer-inp:focus{border-color:var(--accent);}
+.drawer-send{background:var(--accent);border:none;border-radius:9px;padding:7px 13px;color:#fff;cursor:pointer;font-size:.9rem;transition:opacity .2s;flex-shrink:0;}
+.drawer-send:hover{opacity:.85;}
+.stat-mini-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.6rem .8rem;}
+.stat-mini-card.clickable{cursor:pointer;transition:border-color .2s,background .2s;}
+.stat-mini-card.clickable:hover{border-color:var(--accent);background:var(--s3);}
 .unread-dot{width:7px;height:7px;border-radius:50%;background:var(--accent3);box-shadow:0 0 5px var(--accent3);flex-shrink:0;}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:.8rem 1.2rem;font-size:.82rem;z-index:999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;max-width:280px;}
 .toast.show{transform:translateY(0);opacity:1;}
@@ -153,13 +184,29 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
   <div class="auth-card">
     <div class="brand">🎴</div>
     <h1>Seettuwa Admin</h1>
-    <p>Sign in with your Google account
-to access the admin panel.</p>
+    <p>Sign in with your Google account to access the admin panel.</p>
     <button class="google-btn" onclick="signInGoogle()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.1 0 5.8 1.1 8 2.9l5.9-5.9C34.5 3.3 29.5 1 24 1 14.8 1 7 6.7 3.7 14.6l6.9 5.4C12.3 13.8 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.4 5.7c4.3-4 6.8-9.9 6.8-16.9z"/><path fill="#FBBC05" d="M10.6 28.6A14.7 14.7 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-6.9-5.4A23.9 23.9 0 0 0 .5 24c0 3.9.9 7.5 2.6 10.7l7.5-6.1z"/><path fill="#34A853" d="M24 47c5.4 0 10-1.8 13.3-4.8l-7.4-5.7c-1.8 1.2-4.1 2-5.9 2-6.3 0-11.6-4.2-13.5-9.9l-7.5 6.1C7 41.3 14.9 47 24 47z"/></svg>
       Sign in with Google
     </button>
     <div id="auth-error"></div>
+  </div>
+</div>
+
+<!-- MEMBERS DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="members-drawer">
+  <div class="drawer-header">
+    <h3>👥 Members (<span id="drawer-count">0</span>)</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-list" id="drawer-list"></div>
+  <div class="drawer-msg-box">
+    <div class="drawer-msg-to" id="drawer-msg-to">To: <span>📢 All Members</span></div>
+    <div class="drawer-msg-row">
+      <textarea class="drawer-inp" id="drawer-inp" placeholder="Type a message..." rows="1"></textarea>
+      <button class="drawer-send" onclick="sendDrawerMsg()">➤</button>
+    </div>
   </div>
 </div>
 
@@ -183,7 +230,10 @@ to access the admin panel.</p>
       <div class="sb-section">
         <span class="sb-label">Live Stats</span>
         <div class="stat-mini">
-          <div class="stat-mini-card"><div class="sv c-accent" id="st-members">0</div><div class="sl">Members</div></div>
+          <div class="stat-mini-card clickable" onclick="openDrawer()" title="Click to view members">
+            <div class="sv c-accent" id="st-members">0</div>
+            <div class="sl">Members 👆</div>
+          </div>
           <div class="stat-mini-card"><div class="sv c-warn" id="st-online">0</div><div class="sl">Online</div></div>
           <div class="stat-mini-card"><div class="sv c-a2" id="st-picked">0</div><div class="sl">Picked</div></div>
           <div class="stat-mini-card"><div class="sv c-success" id="st-flipped">0</div><div class="sl">Revealed</div></div>
@@ -276,6 +326,7 @@ const db = getDatabase(app);
 let currentAdmin = null;
 let chatTarget = 'all';
 let membersCache = {};
+let latestOnline = {};
 let unseenMsgs = {};
 
 window.signInGoogle = async () => {
@@ -307,10 +358,27 @@ onAuthStateChanged(auth, user => {
 });
 
 function startAll() {
+  let membersData = {}, gameData = {}, onlineData = {};
+
   onValue(ref(db,'requests'), snap => renderRequests(snap.val()||{}));
-  onValue(ref(db,'members'), snap => { membersCache = snap.val()||{}; renderAll(); });
-  onValue(ref(db,'game'), snap => renderAll());
-  onValue(ref(db,'online'), snap => renderAll());
+
+  onValue(ref(db,'members'), snap => {
+    membersData = snap.val()||{};
+    membersCache = membersData;
+    renderAll(membersData, gameData, onlineData);
+    if(document.getElementById('members-drawer').classList.contains('open')) renderDrawer();
+  });
+  onValue(ref(db,'game'), snap => {
+    gameData = snap.val()||{};
+    renderAll(membersData, gameData, onlineData);
+  });
+  onValue(ref(db,'online'), snap => {
+    onlineData = snap.val()||{};
+    latestOnline = onlineData;
+    renderAll(membersData, gameData, onlineData);
+    // refresh drawer if open
+    if(document.getElementById('members-drawer').classList.contains('open')) renderDrawer();
+  });
   onValue(query(ref(db,'messages'), orderByChild('ts'), limitToLast(100)), snap => renderChat(snap.val()||{}));
 }
 
@@ -341,12 +409,10 @@ window.acceptReq = async uid => {
 };
 window.rejectReq = async uid => { await update(ref(db,`requests/${uid}`),{status:'rejected'}); toast('Rejected',''); };
 
-async function renderAll() {
-  const [mSnap, gSnap, oSnap] = await Promise.all([get(ref(db,'members')),get(ref(db,'game')),get(ref(db,'online'))]);
-  const members = mSnap.val()||{};
-  membersCache = members;
-  const game = gSnap.val()||{};
-  const online = oSnap.val()||{};
+function renderAll(members, game, online) {
+  members = members || {};
+  game = game || {};
+  online = online || {};
   const now = Date.now();
   const onlineUids = Object.entries(online).filter(([,t])=>(now-t)<12000).map(([u])=>u);
   const assignments = game.assignments||{};
@@ -386,7 +452,7 @@ async function renderAll() {
     // Build pick order: sort by assignment index in shuffledOrder
     const shuffledOrder = game.shuffledOrder || [];
     const pickOrder = {}; // uid → pick position (1-based)
-    if(isShuffled && Object.keys(assignments).length > 0) {
+    if(game.shuffled && Object.keys(assignments).length > 0) {
       // Sort members who picked by the index of their number in shuffledOrder
       const picked = Object.entries(assignments).map(([uid, num]) => ({
         uid, num, idx: shuffledOrder.indexOf(num)
@@ -544,6 +610,69 @@ window.kickMember = async (uid, name) => {
   await remove(ref(db,`requests/${uid}`));
   toast(`${name} removed`,'');
 };
+
+// ── MEMBERS DRAWER ──
+let drawerMsgTarget = 'all';
+
+window.openDrawer = () => {
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('members-drawer').classList.add('open');
+  renderDrawer();
+};
+window.closeDrawer = () => {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('members-drawer').classList.remove('open');
+};
+
+function renderDrawer() {
+  const members = membersCache;
+  const entries = Object.entries(members);
+  const online = latestOnline || {};
+  const now = Date.now();
+  document.getElementById('drawer-count').textContent = entries.length;
+  const list = document.getElementById('drawer-list');
+  if(!entries.length){
+    list.innerHTML='<div class="empty-note">No accepted members yet.</div>';
+    return;
+  }
+  list.innerHTML = entries.map(([uid, m]) => {
+    const isOnline = online[uid] && (now - online[uid]) < 12000;
+    const init = (m.username||m.displayName||'?')[0].toUpperCase();
+    return `<div class="drawer-member">
+      ${m.photoURL ? `<img class="dm-av" src="${esc(m.photoURL)}">` : `<div class="dm-av-init">${init}</div>`}
+      <div class="dm-info">
+        <div class="dm-name">${esc(m.username||m.displayName)}</div>
+        <div class="dm-email">${esc(m.email)}</div>
+      </div>
+      <div class="dm-status">
+        <span style="width:7px;height:7px;border-radius:50%;background:${isOnline?'var(--success)':'var(--faint)'};display:inline-block;${isOnline?'box-shadow:0 0 5px var(--success)':''}"></span>
+        <button class="dm-msg-btn" onclick="setDrawerTarget('${uid}','${esc(m.username||m.displayName)}')">💬 Message</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.setDrawerTarget = (uid, name) => {
+  drawerMsgTarget = uid;
+  document.getElementById('drawer-msg-to').innerHTML = `To: <span>${esc(name)}</span>`;
+  document.getElementById('drawer-inp').focus();
+};
+
+window.sendDrawerMsg = async () => {
+  const inp = document.getElementById('drawer-inp');
+  const text = inp.value.trim();
+  if(!text) return;
+  await push(ref(db,'messages'), { role:'admin', senderName:'Admin', to: drawerMsgTarget, text, ts: Date.now() });
+  inp.value = '';
+  // reset to all after send
+  drawerMsgTarget = 'all';
+  document.getElementById('drawer-msg-to').innerHTML = 'To: <span>📢 All Members</span>';
+  toast('Sent!','success');
+};
+
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') closeDrawer();
+});
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type||''}`;setTimeout(()=>t.className='toast',2500);}
