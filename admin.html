@@ -405,6 +405,8 @@ window.acceptReq = async uid => {
   const d = snap.val(); if(!d) return;
   await set(ref(db,`members/${uid}`),{ displayName:d.displayName, username:d.username, email:d.email, photoURL:d.photoURL||'', joinedAt:serverTimestamp() });
   await update(ref(db,`requests/${uid}`),{status:'accepted'});
+  // Notify the accepted member
+  await notifyUser(uid, '✅ Seettuwa — Accepted!', `Hi ${d.username}! You have been added to the group. Open the app to join!`);
   toast(`✓ ${d.username||d.displayName} added!`,'success');
 };
 window.rejectReq = async uid => { await update(ref(db,`requests/${uid}`),{status:'rejected'}); toast('Rejected',''); };
@@ -576,15 +578,31 @@ document.getElementById('chat-inp').addEventListener('keydown', e => {
   if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendAdminMessage(); }
 });
 
+// ── PUSH NOTIFICATIONS (DB-based trigger) ──
+// Admin writes to /notifications/{uid} → viewer watches and shows notification
+async function notifyUser(uid, title, body) {
+  await push(ref(db, `notifications/${uid}`), { title, body, ts: Date.now() });
+}
+async function notifyAll(title, body) {
+  const members = membersCache;
+  const batch = {};
+  Object.keys(members).forEach(uid => {
+    batch[`notifications/${uid}/${Date.now()}_${uid.slice(0,4)}`] = { title, body, ts: Date.now() };
+  });
+  await update(ref(db), batch);
+}
+
 window.doShuffle = async () => {
   const members = membersCache;
   const uids = Object.keys(members);
-  if(!uids.length){ toast('Members nanne!','error'); return; }
+  if(!uids.length){ toast('No members!','error'); return; }
   const cardCount = parseInt(document.getElementById('card-count-inp').value)||20;
-  if(cardCount < uids.length){ toast(`Card count (${cardCount}) members count (${uids.length}) walata adui!`,'error'); return; }
+  if(cardCount < uids.length){ toast(`Card count (${cardCount}) is less than member count (${uids.length})!`,'error'); return; }
   const nums = Array.from({length:cardCount},(_,i)=>i+1);
   for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]];}
   await set(ref(db,'game'),{ shuffled:true, cardCount, shuffledOrder:nums, assignments:{}, flipped:{}, startedAt:serverTimestamp() });
+  // Notify all members
+  await notifyAll('🎴 Seettuwa — Cards Ready!', `${cardCount} cards shuffled! Open the app and pick your card now.`);
   toast(`🔀 ${cardCount} cards shuffled!`,'success');
 };
 window.resetFlips = async () => { if(!confirm('Reset card flips?')) return; await update(ref(db,'game'),{flipped:{}}); toast('↩️ Flips reset','success'); };
