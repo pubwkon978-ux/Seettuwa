@@ -245,6 +245,8 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signO
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getDatabase, ref, set, get, onValue, update, push, serverTimestamp, query, orderByChild, limitToLast }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getMessaging, getToken, onMessage }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC15xoj_yTycj6JKQmNamP_RdHAkRTBKJU",
@@ -259,6 +261,37 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const messaging = getMessaging(app);
+
+const VAPID_KEY = 'JtKMGivx7ATgB_OUzE_tDPsAJfzIxAQQ66cUUOiHIns';
+
+// Register service worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/firebase-messaging-sw.js').catch(()=>{});
+}
+
+// Setup push notifications for this user
+async function setupNotifications(uid){
+  try {
+    const permission = await Notification.requestPermission();
+    if(permission !== 'granted') return;
+    const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+    if(token){
+      await set(ref(db, `fcmTokens/${uid}`), { token, updatedAt: Date.now() });
+    }
+  } catch(e){ console.log('FCM setup:', e.message); }
+}
+
+// Foreground message handler (app is open)
+onMessage(messaging, payload => {
+  const title = payload.notification?.title || 'Seettuwa';
+  const body = payload.notification?.body || '';
+  toast(`🔔 ${body}`, 'success');
+  // Also show browser notification if permitted
+  if(Notification.permission === 'granted'){
+    new Notification(title, { body, icon: '/favicon.ico' });
+  }
+});
 
 let me = null;
 let myData = null;
@@ -383,8 +416,10 @@ function enterGame(justAccepted=false, pendingState=null, pendingName=''){
     return;
   }
 
-  if(justAccepted) toast('🎉 Admin oba accept karanawa! Welcome!','success');
+  if(justAccepted) toast('🎉 Admin accepted you! Welcome!','success');
   setupPresence();
+  // Request notification permission
+  if(Notification.permission === 'default') Notification.requestPermission();
   setupListeners();
 }
 
@@ -404,8 +439,8 @@ function clearPresence(){
   if(me) try{set(ref(db,`online/${me.uid}`),null);}catch{}
 }
 function clearListeners(){
-  [gameUnsub,memberUnsub,onlineUnsub,msgUnsub,reqUnsub].forEach(u=>u&&u());
-  gameUnsub=memberUnsub=onlineUnsub=msgUnsub=reqUnsub=null;
+  [gameUnsub,memberUnsub,onlineUnsub,msgUnsub,reqUnsub,notifUnsub].forEach(u=>u&&u());
+  gameUnsub=memberUnsub=onlineUnsub=msgUnsub=reqUnsub=notifUnsub=null;
 }
 
 function setupListeners(){
@@ -415,6 +450,33 @@ function setupListeners(){
   gameUnsub   = onValue(ref(db,'game'),    s=>{ G=s.val()||{}; render(M,G,O); });
   onlineUnsub = onValue(ref(db,'online'),  s=>{ O=s.val()||{}; render(M,G,O); });
   msgUnsub    = onValue(query(ref(db,'messages'),orderByChild('ts'),limitToLast(100)), s=>renderChat(s.val()||{}));
+  // DB-based push notifications
+  listenNotifications();
+}
+
+let notifUnsub = null;
+let notifSeenTs = Date.now();
+function listenNotifications(){
+  if(notifUnsub){ notifUnsub(); notifUnsub=null; }
+  notifUnsub = onValue(query(ref(db,`notifications/${me.uid}`), orderByChild('ts'), limitToLast(5)), snap => {
+    const data = snap.val();
+    if(!data) return;
+    Object.values(data).forEach(n => {
+      if(n.ts > notifSeenTs){
+        notifSeenTs = n.ts;
+        showBrowserNotification(n.title, n.body);
+      }
+    });
+  });
+}
+
+function showBrowserNotification(title, body){
+  // In-app toast always
+  toast(`🔔 ${body}`, 'success');
+  // Browser notification if permitted
+  if(Notification.permission === 'granted'){
+    new Notification(title, { body, icon: '/favicon.ico', vibrate: [200,100,200] });
+  }
 }
 
 function render(members, game, online){
