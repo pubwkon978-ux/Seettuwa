@@ -244,7 +244,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
         <div class="card-count-row">
           <label>Cards:</label>
           <input type="number" class="count-inp" id="card-count-inp" value="20" min="2" max="100">
-          <span style="font-size:.7rem;color:var(--muted);">total</span>
+          <span style="font-size:.7rem;color:var(--muted);">total (2–N+1, #1 = admin)</span>
         </div>
         <button class="action-btn primary" id="btn-shuffle" onclick="doShuffle()" disabled>🔀 Set Cards & Shuffle</button>
         <button class="action-btn" onclick="resetFlips()">↩️ Reset Card Flips</button>
@@ -272,7 +272,7 @@ header .logo{font-size:1.1rem;font-weight:800;color:var(--accent);}
       </div>
       <div class="section-title">Accepted Members</div>
       <div class="members-grid" id="members-grid"><div class="empty-note">No members yet</div></div>
-      <div class="section-title">Cards Overview</div>
+      <div class="section-title">Cards Overview <span style="color:var(--accent);font-weight:400;">(card #1 reserved for admin)</span></div>
       <div class="cards-grid-admin" id="cards-grid"></div>
       <div style="margin-top:1.2rem;">
         <div class="section-title">Live Results</div>
@@ -489,7 +489,7 @@ function renderAll(members, game, online) {
     return `<div class="to-pill ${isSelected?'selected':''}" data-to="${uid}" onclick="selectChatTo('${uid}',this)">${esc(name)}</div>`;
   }).join('');
 
-  // cards — auto arrange: show only cardCount cards, sized to fit
+  // cards — auto arrange: show only cardCount cards (numbered 2..cardCount+1, #1 reserved for admin)
   const cg = document.getElementById('cards-grid');
   const numToUid = {};
   Object.entries(assignments).forEach(([uid,num])=>numToUid[num]=uid);
@@ -497,7 +497,7 @@ function renderAll(members, game, online) {
   const cols = cardCount <= 10 ? 5 : cardCount <= 20 ? 5 : cardCount <= 30 ? 6 : 7;
   cg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   cg.innerHTML = Array.from({length:cardCount},(_,i)=>{
-    const num=i+1, uid=numToUid[num];
+    const num=i+2, uid=numToUid[num];
     const owner = uid?(members[uid]?.username||members[uid]?.displayName||'?'):null;
     const isFlipped = uid&&flipped[uid];
     return `<div class="ca-card ${isFlipped?'flipped':uid?'assigned':''}">
@@ -598,12 +598,13 @@ window.doShuffle = async () => {
   if(!uids.length){ toast('No members!','error'); return; }
   const cardCount = parseInt(document.getElementById('card-count-inp').value)||20;
   if(cardCount < uids.length){ toast(`Card count (${cardCount}) is less than member count (${uids.length})!`,'error'); return; }
-  const nums = Array.from({length:cardCount},(_,i)=>i+1);
+  // Card numbers start at 2 — #1 is reserved for the Admin (the leader), never given to members
+  const nums = Array.from({length:cardCount},(_,i)=>i+2);
   for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]];}
   await set(ref(db,'game'),{ shuffled:true, cardCount, shuffledOrder:nums, assignments:{}, flipped:{}, startedAt:serverTimestamp() });
   // Notify all members
   await notifyAll('🎴 Seettuwa — Cards Ready!', `${cardCount} cards shuffled! Open the app and pick your card now.`);
-  toast(`🔀 ${cardCount} cards shuffled!`,'success');
+  toast(`🔀 ${cardCount} cards shuffled! (numbered 2–${cardCount+1}, #1 = admin)`,'success');
 };
 window.resetFlips = async () => { if(!confirm('Reset card flips?')) return; await update(ref(db,'game'),{flipped:{}}); toast('↩️ Flips reset','success'); };
 window.resetGame = async () => {
